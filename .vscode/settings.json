@@ -1,0 +1,23 @@
+{
+  "docker.defaultRegistryPath": "blockify",
+  "docker.composeCommand": "docker-compose",
+  "docker.host": "localhost",
+  "docker.imagesPruneAfterDays": 7,
+  "docker.containersPruneAfterDays": 7,
+  "docker.volumesPruneAfterDays": 7,
+  "docker.systemPruneAfterDays": 7,
+  "docker.explorerRefreshInterval": 1000,
+  "docker.commands.attach": "docker exec -it ${containerId} /bin/bash",
+  "docker.commands.build": "docker build --rm -f ${dockerfile} -t ${tag} ${context}",
+  "docker.commands.run": "docker run --rm -d ${exposedPorts} ${tag}",
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/node_modules": true
+  },
+  "search.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/node_modules": true
+  }
+}
