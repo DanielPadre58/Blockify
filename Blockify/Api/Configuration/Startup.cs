@@ -1,4 +1,4 @@
-using Blockify.Api;
+using Blockify.Api.Configuration;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
