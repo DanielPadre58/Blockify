@@ -1,0 +1,10 @@
+services:
+  blockify-app:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;https://+:5001
+    volumes:
+      - ./Blockify:/app
+      - /app/bin
+      - /app/obj
+    command: dotnet watch run --urls "http://+:5000;https://+:5001"

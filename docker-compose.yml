@@ -1,0 +1,35 @@
+services:
+  blockify-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blockify-app
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;https://+:5001
+    volumes:
+      - ./Blockify:/app
+      - /app/bin
+      - /app/obj
+    depends_on:
+      - blockify-db
+    restart: unless-stopped
+
+  blockify-db:
+    image: postgres:16-alpine
+    container_name: blockify-db
+    environment:
+      POSTGRES_DB: blockify
+      POSTGRES_USER: blockify_user
+      POSTGRES_PASSWORD: blockify_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

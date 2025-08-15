@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Docker Compose" type="docker-compose" factoryName="docker-compose">
+    <docker-compose>
+      <file path="$PROJECT_DIR$/docker-compose.yml" />
+    </docker-compose>
+    <method v="2" />
+  </configuration>
+</component>
