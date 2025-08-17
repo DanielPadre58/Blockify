@@ -3,11 +3,15 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("appsettings.Development.Local.json", optional: true, reloadOnChange: true);
+}
 
-DependencyInjector.Inject(builder.Services, builder.Configuration);
+var configurator = new ApplicationConfigurator(builder.Services, builder.Configuration);
+
+configurator.ConfigureServices();
+configurator.AddDependencies();
 
 var app = builder.Build();
 
@@ -22,7 +26,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseAuthorization();
+configurator.Configure(app);
 app.MapControllers();
 
 app.Run();
