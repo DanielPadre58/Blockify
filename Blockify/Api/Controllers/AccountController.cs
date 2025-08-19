@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Blockify.Application.DTOs;
+using Blockify.Application.DTOs.Authentication;
 
 namespace Blockify.Api.Controllers {
     [ApiController]
@@ -29,11 +32,29 @@ namespace Blockify.Api.Controllers {
             
             if (result?.Succeeded == true)
             {
-                await HttpContext.SignInAsync("default_cookie", result.Principal, result.Properties);
-                return Ok("Successfully signed in with Spotify!");
+                var accessToken = await HttpContext.GetTokenAsync("spotify", "access_token");
+                var refreshToken = await HttpContext.GetTokenAsync("spotify", "refresh_token");
+                
+                var userId = result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userName = result.Principal?.FindFirst(ClaimTypes.Name)?.Value;
+                
+                await HttpContext.SignInAsync("default_cookie", result.Principal!, result.Properties!);
+                
+                return Ok(new ResponseModel<UserAuthenticationDto>(
+                    true,
+                    "User authenticated successfully!",
+                    new UserAuthenticationDto(
+                        userId!,
+                        userName!,
+                        new TokenDto(accessToken!, refreshToken!)
+                    )
+                ));
             }
             
-            return BadRequest("Authentication failed");
+            return Ok(new ResponseModel<TokenDto>(
+                    false,
+                    "Authentication failed"
+                ));
         }
 
         [HttpGet("logout")]
