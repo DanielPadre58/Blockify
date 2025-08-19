@@ -4,11 +4,12 @@ using System.Security.Claims;
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
 
-namespace Blockify.Api.Controllers {
+namespace Blockify.Api.Controllers
+{
     [ApiController]
     [Route("account")]
-    public class AccountController : ControllerBase{
-        
+    public class AccountController : ControllerBase
+    {
         [HttpGet("login")]
         public IActionResult Login()
         {
@@ -17,8 +18,9 @@ namespace Blockify.Api.Controllers {
 
         [HttpGet("spotify")]
         public IActionResult Spotify()
-        {   
-            var prop = new AuthenticationProperties{
+        {
+            var prop = new AuthenticationProperties
+            {
                 RedirectUri = Url.Action("SignIn")
             };
 
@@ -29,17 +31,17 @@ namespace Blockify.Api.Controllers {
         public async Task<IActionResult> SignIn()
         {
             var result = await HttpContext.AuthenticateAsync("spotify");
-            
+
             if (result?.Succeeded == true)
             {
                 var accessToken = await HttpContext.GetTokenAsync("spotify", "access_token");
                 var refreshToken = await HttpContext.GetTokenAsync("spotify", "refresh_token");
-                
+
                 var userId = result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var userName = result.Principal?.FindFirst(ClaimTypes.Name)?.Value;
-                
+
                 await HttpContext.SignInAsync("default_cookie", result.Principal!, result.Properties!);
-                
+
                 return Ok(new ResponseModel<UserAuthenticationDto>(
                     true,
                     "User authenticated successfully!",
@@ -50,7 +52,7 @@ namespace Blockify.Api.Controllers {
                     )
                 ));
             }
-            
+
             return Ok(new ResponseModel<TokenDto>(
                     false,
                     "Authentication failed"

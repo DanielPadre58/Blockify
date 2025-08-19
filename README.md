@@ -31,7 +31,7 @@ A .NET 9.0 web application built with ASP.NET Core.
    ```
 
 5. Open your browser and navigate to:
-   - https://localhost:7001 (HTTPS)
+   - https://localhost:7155 (HTTPS)
    - http://localhost:5000 (HTTP)
 
 ## Development
@@ -41,22 +41,10 @@ The application uses:
 - ASP.NET Core Web API
 - OpenAPI/Swagger for API documentation
 
-## Project Structure
-
-```
-Blockify/
-├── Blockify.csproj          # Project file with dependencies
-├── Startup.cs              # Application startup configuration
-├── appsettings.json        # Application configuration
-├── appsettings.Development.json  # Development-specific settings
-└── Properties/
-    └── launchSettings.json # Launch configuration
-```
-
 ## API Documentation
 
 When running in development mode, you can access the OpenAPI documentation at:
-- https://localhost:7001/swagger
+- http://localhost:5000/scalar/v1
 
 ## Contributing
 
@@ -65,7 +53,3 @@ When running in development mode, you can access the OpenAPI documentation at:
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
-
-## License
-
-[Add your license information here]
