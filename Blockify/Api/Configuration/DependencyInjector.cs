@@ -1,3 +1,4 @@
+using Blockify.Application.Services;
 using Blockify.Domain.Database;
 using Blockify.Shared.Exceptions;
 using Npgsql;
@@ -5,7 +6,8 @@ using Npgsql;
 namespace Blockify.Api.Configuration
 {
     public static class DependencyInjector{
-        public static void Inject(IServiceCollection services, IConfiguration configuration){
+        public static void Inject(IServiceCollection services, IConfiguration configuration)
+        {
             services.AddScoped<IBlockifyDbService, BlockifyDbService>(
                 options =>
                 {
@@ -13,6 +15,7 @@ namespace Blockify.Api.Configuration
                     return new BlockifyDbService(npgsqlDataSourceBuilder);
                 }
             );
+            services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
         }
     }
 }
