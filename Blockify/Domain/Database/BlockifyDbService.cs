@@ -3,12 +3,13 @@ using Npgsql;
 namespace Blockify.Domain.Database
 {
     public class BlockifyDbService : IBlockifyDbService{
+        private readonly NpgsqlDataSource _dataSource;
         private readonly NpgsqlConnection _connection;
 
-        public BlockifyDbService(string connectionString)
+        public BlockifyDbService(NpgsqlDataSourceBuilder sourceBuilder)
         {
-            _connection = new NpgsqlConnection(connectionString);
-            _connection.Open();
+            _dataSource = sourceBuilder.Build();
+            _connection = _dataSource.OpenConnection();
         }
     }
 }
