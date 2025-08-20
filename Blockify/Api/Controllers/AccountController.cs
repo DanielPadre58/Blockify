@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
+using Blockify.Application.Services;
+using Microsoft.AspNetCore.Authorization;
+using Blockify.Shared.Exceptions;
 
 namespace Blockify.Api.Controllers
 {
@@ -10,6 +13,13 @@ namespace Blockify.Api.Controllers
     [Route("account")]
     public class AccountController : ControllerBase
     {
+        private readonly IUserAuthenticationService _authenticationService;
+
+        public AccountController(IUserAuthenticationService service)
+        {
+            _authenticationService = service;
+        }
+
         [HttpGet("login")]
         public IActionResult Login()
         {
@@ -30,36 +40,32 @@ namespace Blockify.Api.Controllers
         [HttpGet("signin")]
         public async Task<IActionResult> SignIn()
         {
-            var result = await HttpContext.AuthenticateAsync("spotify");
-
-            if (result?.Succeeded == true)
+            try
             {
-                var accessToken = await HttpContext.GetTokenAsync("spotify", "access_token");
-                var refreshToken = await HttpContext.GetTokenAsync("spotify", "refresh_token");
-
-                var userId = result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var userName = result.Principal?.FindFirst(ClaimTypes.Name)?.Value;
-
-                await HttpContext.SignInAsync("default_cookie", result.Principal!, result.Properties!);
+                var result = await _authenticationService.AuthenticateUserAsync(HttpContext);
 
                 return Ok(new ResponseModel<UserAuthenticationDto>(
                     true,
-                    "User authenticated successfully!",
-                    new UserAuthenticationDto(
-                        userId!,
-                        userName!,
-                        new TokenDto(accessToken!, refreshToken!)
-                    )
+                    "User authenticated with Spotify successfully",
+                    result
                 ));
             }
-
-            return Ok(new ResponseModel<TokenDto>(
-                    false,
-                    "Authentication failed"
-                ));
+            catch (MissingPrincipalClaimException ex)
+            {
+                return BadRequest(new ResponseModel<UserAuthenticationDto>(false, ex.Message));
+            }
+            catch (AuthenticationException ex)
+            {
+                return Unauthorized(new ResponseModel<UserAuthenticationDto>(false, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseModel<UserAuthenticationDto>(false, ex.Message));
+            }
         }
 
         [HttpGet("logout")]
+        [Authorize]
         public IActionResult Logout()
         {
             return SignOut("default_cookie");
