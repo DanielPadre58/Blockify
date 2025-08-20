@@ -25,17 +25,6 @@ docker-compose up -d --build
 - **HTTPS**: https://localhost:5001
 - **OpenAPI/Swagger**: http://localhost:5000/swagger (in development mode)
 
-### 3. Database Access (if enabled)
-
-- **PostgreSQL**: localhost:5432
-  - Database: `blockify`
-  - Username: `blockify_user`
-  - Password: `blockify_password`
-
-### 4. Redis Cache (if enabled)
-
-- **Redis**: localhost:6379
-
 ## Development Mode
 
 The application includes a development override configuration that enables:
