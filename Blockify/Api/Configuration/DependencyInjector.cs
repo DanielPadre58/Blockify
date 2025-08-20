@@ -1,14 +1,21 @@
+using Blockify.Application.Services;
 using Blockify.Domain.Database;
 using Blockify.Shared.Exceptions;
+using Npgsql;
 
 namespace Blockify.Api.Configuration
 {
     public static class DependencyInjector{
-        public static void Inject(IServiceCollection services, IConfiguration configuration){
+        public static void Inject(IServiceCollection services, IConfiguration configuration)
+        {
             services.AddScoped<IBlockifyDbService, BlockifyDbService>(
-                options => new BlockifyDbService(configuration.GetConnectionString("BlockifyDb") ??
-                                                    throw new MissingConfigurationException("BlockifyDb connection string"))
+                options =>
+                {
+                    var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("Blockify"));
+                    return new BlockifyDbService(npgsqlDataSourceBuilder);
+                }
             );
+            services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
         }
     }
 }
