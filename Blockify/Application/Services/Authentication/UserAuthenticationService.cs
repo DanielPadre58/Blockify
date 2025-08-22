@@ -16,10 +16,14 @@ namespace Blockify.Application.Services
 
             if (result?.Succeeded == true)
             {
-                var accessToken = await context.GetTokenAsync("spotify", "access_token");
-                var refreshToken = await context.GetTokenAsync("spotify", "refresh_token");
-                var userId = result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var userName = result.Principal?.FindFirst(ClaimTypes.Name)?.Value;
+                var accessToken = await context.GetTokenAsync("spotify", "access_token") ??
+                    throw new MissingPrincipalClaimException("Token.AccessToken");
+                var refreshToken = await context.GetTokenAsync("spotify", "refresh_token") ??
+                    throw new MissingPrincipalClaimException("Token.RefreshToken");
+                var userId = result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                    throw new MissingPrincipalClaimException("userId");
+                var userName = result.Principal?.FindFirst(ClaimTypes.Name)?.Value ??
+                    throw new MissingPrincipalClaimException("userName");
 
                 await context.SignInAsync("default_cookie", result.Principal!, result.Properties!);
 
@@ -27,13 +31,13 @@ namespace Blockify.Application.Services
                 {
                     Spotify = new User.SpotifyData()
                     {
-                        Id = userId ?? throw new MissingPrincipalClaimException("userId"),
+                        Id = userId,
                         Url = SpotifyAuthenticationDefaults.UserInformationEndpoint
                             .Replace("api", "open")
                             .Replace("v1", "user")
                             .Replace("me", userId),
-                        Username = userName ?? throw new MissingPrincipalClaimException("userName"),
-                        RefreshToken = refreshToken ?? throw new MissingPrincipalClaimException("Token.RefreshToken")
+                        Username = userName,
+                        RefreshToken = refreshToken
                     },
                     CreationDate = DateTime.Now,
                     LastRequestDate = DateTime.Now
@@ -46,7 +50,7 @@ namespace Blockify.Application.Services
                             Spotify = user.Spotify
                         },
                         new TokenDto(
-                            accessToken ?? throw new MissingPrincipalClaimException("Token.AccessToken"),
+                            accessToken,
                             refreshToken
                         )
                     );
