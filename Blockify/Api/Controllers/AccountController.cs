@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
 using Blockify.Application.Services;

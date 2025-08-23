@@ -1,6 +1,7 @@
 using Blockify.Application.Services;
+using Blockify.Application.Services.Spotify;
+using Blockify.Application.Services.Spotify.Client;
 using Blockify.Domain.Database;
-using Blockify.Shared.Exceptions;
 using Npgsql;
 
 namespace Blockify.Api.Configuration
@@ -16,6 +17,8 @@ namespace Blockify.Api.Configuration
                 }
             );
             services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+            services.AddHttpClient<ISpotifyClient, SpotifyClient>();
+            services.AddScoped<ISpotifyService, SpotifyService>();
         }
     }
 }
