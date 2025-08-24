@@ -6,18 +6,22 @@ using Npgsql;
 
 namespace Blockify.Api.Configuration
 {
-    public static class DependencyInjector{
+    public static class DependencyInjector
+    {
         public static void Inject(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IBlockifyDbService, BlockifyDbService>(
-                options =>
-                {
-                    var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("Blockify"));
-                    return new BlockifyDbService(npgsqlDataSourceBuilder);
-                }
-            );
+            services.AddScoped<IBlockifyDbService, BlockifyDbService>(options =>
+            {
+                var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(
+                    configuration.GetConnectionString("Blockify")
+                );
+                return new BlockifyDbService(npgsqlDataSourceBuilder);
+            });
             services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
-            services.AddHttpClient<ISpotifyClient, SpotifyClient>();
+            services.AddHttpClient<ISpotifyClient, SpotifyClient>(options =>
+            {
+                options.BaseAddress = new Uri("https://accounts.spotify.com/api/");
+            });
             services.AddScoped<ISpotifyService, SpotifyService>();
         }
     }
