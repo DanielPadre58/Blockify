@@ -5,7 +5,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Configuration.AddJsonFile("appsettings.Development.Local.json", optional: true, reloadOnChange: true);
+    builder.Configuration.AddJsonFile(
+        "appsettings.Development.Local.json",
+        optional: true,
+        reloadOnChange: true
+    );
 }
 
 var configurator = new ApplicationConfigurator(builder.Services, builder.Configuration);
@@ -18,7 +22,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference(options => {
+    app.MapScalarApiReference(options =>
+    {
         options
             .WithTitle("Blockify")
             .WithTheme(ScalarTheme.DeepSpace)

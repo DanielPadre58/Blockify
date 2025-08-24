@@ -1,10 +1,10 @@
+using System.Security.Claims;
 using AspNet.Security.OAuth.Spotify;
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
 using Blockify.Domain.Entities;
 using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
 
 namespace Blockify.Application.Services
 {
@@ -16,14 +16,18 @@ namespace Blockify.Application.Services
 
             if (result?.Succeeded == true)
             {
-                var accessToken = await context.GetTokenAsync("spotify", "access_token") ??
-                    throw new MissingPrincipalClaimException("Token.AccessToken");
-                var refreshToken = await context.GetTokenAsync("spotify", "refresh_token") ??
-                    throw new MissingPrincipalClaimException("Token.RefreshToken");
-                var userId = result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
-                    throw new MissingPrincipalClaimException("userId");
-                var userName = result.Principal?.FindFirst(ClaimTypes.Name)?.Value ??
-                    throw new MissingPrincipalClaimException("userName");
+                var accessToken =
+                    await context.GetTokenAsync("spotify", "access_token")
+                    ?? throw new MissingPrincipalClaimException("Token.AccessToken");
+                var refreshToken =
+                    await context.GetTokenAsync("spotify", "refresh_token")
+                    ?? throw new MissingPrincipalClaimException("Token.RefreshToken");
+                var userId =
+                    result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    ?? throw new MissingPrincipalClaimException("userId");
+                var userName =
+                    result.Principal?.FindFirst(ClaimTypes.Name)?.Value
+                    ?? throw new MissingPrincipalClaimException("userName");
 
                 await context.SignInAsync("default_cookie", result.Principal!, result.Properties!);
 
@@ -32,28 +36,21 @@ namespace Blockify.Application.Services
                     Spotify = new User.SpotifyData()
                     {
                         Id = userId,
-                        Url = SpotifyAuthenticationDefaults.UserInformationEndpoint
-                            .Replace("api", "open")
+                        Url = SpotifyAuthenticationDefaults
+                            .UserInformationEndpoint.Replace("api", "open")
                             .Replace("v1", "user")
                             .Replace("me", userId),
                         Username = userName,
-                        RefreshToken = refreshToken
+                        RefreshToken = refreshToken,
                     },
                     CreationDate = DateTime.Now,
-                    LastRequestDate = DateTime.Now
+                    LastRequestDate = DateTime.Now,
                 };
 
                 return new(
-                        new UserDto()
-                        {
-                            Id = user.Id,
-                            Spotify = user.Spotify
-                        },
-                        new TokenDto(
-                            accessToken,
-                            refreshToken
-                        )
-                    );
+                    new UserDto() { Id = user.Id, Spotify = user.Spotify },
+                    new TokenDto { AccessToken = accessToken, RefreshToken = refreshToken }
+                );
             }
 
             throw new AuthenticationException();
