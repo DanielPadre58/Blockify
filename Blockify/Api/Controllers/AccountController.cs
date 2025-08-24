@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication;
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
 using Blockify.Application.Services;
-using Microsoft.AspNetCore.Authorization;
+using Blockify.Application.Services.Spotify;
+using Blockify.Application.Services.Spotify.Client;
 using Blockify.Shared.Exceptions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Blockify.Api.Controllers
 {
@@ -13,10 +15,30 @@ namespace Blockify.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IUserAuthenticationService _authenticationService;
+        private readonly ISpotifyService _spotifyService;
 
-        public AccountController(IUserAuthenticationService service)
+        public AccountController(IUserAuthenticationService service, ISpotifyService spotifyService)
         {
             _authenticationService = service;
+            _spotifyService = spotifyService;
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        {
+            try
+            {
+                var token = await _spotifyService.RefreshTokenAsync(refreshToken);
+                return Ok(new ResponseModel<TokenDto>(true, "Token refreshed successfully", token));
+            }
+            catch (AuthenticationException ex)
+            {
+                return BadRequest(new ResponseModel<TokenDto>(false, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseModel<TokenDto>(false, ex.Message));
+            }
         }
 
         [HttpGet("login")]
@@ -28,10 +50,7 @@ namespace Blockify.Api.Controllers
         [HttpGet("spotify")]
         public IActionResult Spotify()
         {
-            var prop = new AuthenticationProperties
-            {
-                RedirectUri = Url.Action("SignIn")
-            };
+            var prop = new AuthenticationProperties { RedirectUri = Url.Action("SignIn") };
 
             return Challenge(prop, "spotify");
         }
@@ -43,11 +62,13 @@ namespace Blockify.Api.Controllers
             {
                 var result = await _authenticationService.AuthenticateUserAsync(HttpContext);
 
-                return Ok(new ResponseModel<UserAuthenticationDto>(
-                    true,
-                    "User authenticated with Spotify successfully",
-                    result
-                ));
+                return Ok(
+                    new ResponseModel<UserAuthenticationDto>(
+                        true,
+                        "User authenticated with Spotify successfully",
+                        result
+                    )
+                );
             }
             catch (MissingPrincipalClaimException ex)
             {
