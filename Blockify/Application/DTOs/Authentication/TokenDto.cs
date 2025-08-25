@@ -11,7 +11,7 @@ namespace Blockify.Application.DTOs.Authentication
         public string TokenType { get; set; } = null!;
 
         [JsonPropertyName("expires_in")]
-        public int ExpiresIn { get; set; }
+        public long Expiry { get; set; }
 
         [JsonPropertyName("refresh_token")]
         public string RefreshToken { get; set; } = null!;
