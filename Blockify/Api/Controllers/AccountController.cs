@@ -25,11 +25,11 @@ namespace Blockify.Api.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshToken)
         {
             try
             {
-                var token = await _spotifyService.RefreshTokenAsync(refreshToken);
+                var token = await _spotifyService.RefreshTokenAsync(refreshToken.RefreshToken);
                 return Ok(new ResponseModel<TokenDto>(true, "Token refreshed successfully", token));
             }
             catch (AuthenticationException ex)
