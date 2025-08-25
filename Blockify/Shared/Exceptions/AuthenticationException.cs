@@ -5,6 +5,9 @@ namespace Blockify.Shared.Exceptions
         public AuthenticationException()
             : base("Unable to authenticate user") { }
 
+        public AuthenticationException(string message)
+            : base(message) { }
+
         public AuthenticationException(string message, Exception? innerException)
             : base(message, innerException) { }
     }
