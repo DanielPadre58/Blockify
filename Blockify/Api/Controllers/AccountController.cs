@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
 using Blockify.Application.Services;
@@ -58,9 +59,13 @@ namespace Blockify.Api.Controllers
         [HttpGet("signin")]
         public async Task<IActionResult> SignIn()
         {
+            Logout();
+
             try
             {
                 var result = await _authenticationService.AuthenticateUserAsync(HttpContext);
+
+                var claims = User.Claims.ToList();
 
                 return Ok(
                     new ResponseModel<UserAuthenticationDto>(
