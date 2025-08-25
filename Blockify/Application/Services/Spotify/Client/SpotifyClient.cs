@@ -38,14 +38,16 @@ namespace Blockify.Application.Services.Spotify.Client
 
             var json = await response.Content.ReadAsStringAsync();
 
-            var content = JsonSerializer.Deserialize<TokenDto>(json);
+            var content =
+                JsonSerializer.Deserialize<TokenDto>(json)
+                ?? throw new Exception("Failed to deserialize Spotify token response.");
 
             if (content?.RefreshToken == null)
             {
                 content!.RefreshToken = refreshToken;
             }
 
-            return content!;
+            return content;
         }
     }
 }
