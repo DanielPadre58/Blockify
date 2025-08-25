@@ -32,6 +32,9 @@ namespace Blockify.Application.Services
                         Username =
                             result.Principal?.FindFirst(ClaimTypes.Name)?.Value
                             ?? throw new MissingPrincipalClaimException("spotify:username"),
+                        Url =
+                            result.Principal?.FindFirst("urn:spotify:url")?.Value
+                            ?? throw new MissingPrincipalClaimException("spotify:url"),
                         RefreshToken =
                             result.Properties?.GetTokenValue("refresh_token")
                             ?? throw new AuthenticationException("Refresh token not found."),
