@@ -49,7 +49,13 @@ namespace Blockify.Application.Services
 
                 return new(
                     new UserDto() { Id = user.Id, Spotify = user.Spotify },
-                    new TokenDto { AccessToken = accessToken, RefreshToken = refreshToken }
+                    new TokenDto
+                    {
+                        AccessToken = accessToken,
+                        TokenType = "Bearer",
+                        ExpiresIn = 3600,
+                        RefreshToken = refreshToken,
+                    }
                 );
             }
 
