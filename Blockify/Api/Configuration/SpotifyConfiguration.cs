@@ -1,4 +1,4 @@
-namespace Blockify.Application.Services.Spotify
+namespace Blockify.Api.Configuration
 {
     public class SpotifyConfiguration
     {
