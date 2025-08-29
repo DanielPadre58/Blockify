@@ -370,3 +370,4 @@ appsettings.Local.json
 .vscode/launch.json
 .vscode/tasks.json
 Blockify.sln
+Blockify/appsettings.Development.json
