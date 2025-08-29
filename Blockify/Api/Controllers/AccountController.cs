@@ -1,9 +1,7 @@
-using System.Security.Claims;
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
 using Blockify.Application.Services;
 using Blockify.Application.Services.Spotify;
-using Blockify.Application.Services.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -25,11 +23,12 @@ namespace Blockify.Api.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshToken)
+        public async Task<IActionResult> RefreshToken()
         {
             try
             {
-                var token = await _spotifyService.RefreshTokenAsync(refreshToken.RefreshToken);
+                var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
+                var token = await _spotifyService.RefreshTokenAsync(userId);
                 return Ok(new ResponseModel<TokenDto>(true, "Token refreshed successfully", token));
             }
             catch (AuthenticationException ex)
