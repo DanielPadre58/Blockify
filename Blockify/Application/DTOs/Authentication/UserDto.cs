@@ -1,11 +1,11 @@
-using Blockify.Domain.Entities;
 using static Blockify.Domain.Entities.User;
 
 namespace Blockify.Application.DTOs
 {
     public record UserDto
     {
-        public required Guid Id { get; set; }
-        public required SpotifyData Spotify { get; set; }
+        public long Id { get; set; }
+        public string Email { get; set; }
+        public SpotifyData Spotify { get; set; }
     }
 }
