@@ -1,5 +1,7 @@
 using System.Text.Json;
+using Blockify.Api.Configuration;
 using Blockify.Application.DTOs.Authentication;
+using Blockify.Domain.ExternalEntities.Spotify;
 using Microsoft.Extensions.Options;
 
 namespace Blockify.Application.Services.Spotify.Client
@@ -18,9 +20,34 @@ namespace Blockify.Application.Services.Spotify.Client
             _spotifyConfiguration = spotifyConfiguration.Value;
         }
 
+        public async Task<Playlist> GetPlaylistAsync(string playlistId, string accessToken)
+        {
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"https://api.spotify.com/v1/playlists/{playlistId}"
+            );
+
+            request.Headers.Add("Authorization", $"Bearer {accessToken}");
+
+            var response = await _httpClient.SendAsync(request);
+
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var content =
+                JsonSerializer.Deserialize<Playlist>(json)
+                ?? throw new Exception("Failed to deserialize Spotify playlist response.");
+
+            return content;
+        }
+
         public async Task<TokenDto> RefreshTokenAsync(string refreshToken)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "token");
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                "https://accounts.spotify.com/api/token"
+            );
 
             var requestContent = new Dictionary<string, string>
             {
