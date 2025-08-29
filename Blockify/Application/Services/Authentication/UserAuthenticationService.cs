@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
+using Blockify.Domain.Database;
 using Blockify.Domain.Entities;
 using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication;
@@ -10,6 +11,13 @@ namespace Blockify.Application.Services
 {
     public class UserAuthenticationService : IUserAuthenticationService
     {
+        private readonly IBlockifyDbService _blockifyDbService;
+
+        public UserAuthenticationService(IBlockifyDbService blockifyDbService)
+        {
+            _blockifyDbService = blockifyDbService;
+        }
+
         public async Task<UserAuthenticationDto> AuthenticateUserAsync(HttpContext context)
         {
             var result =
@@ -23,7 +31,9 @@ namespace Blockify.Application.Services
             {
                 User = new UserDto
                 {
-                    Id = Guid.NewGuid(),
+                    Email =
+                        result.Principal?.FindFirst(ClaimTypes.Email)?.Value
+                        ?? throw new MissingPrincipalClaimException("email"),
                     Spotify = new SpotifyData()
                     {
                         Id =
@@ -38,6 +48,9 @@ namespace Blockify.Application.Services
                         RefreshToken =
                             result.Properties?.GetTokenValue("refresh_token")
                             ?? throw new AuthenticationException("Refresh token not found."),
+                        AccessToken =
+                            result.Properties?.GetTokenValue("access_token")
+                            ?? throw new AuthenticationException("Access token not found."),
                     },
                 },
                 Token = new TokenDto
@@ -64,7 +77,7 @@ namespace Blockify.Application.Services
 
             result
                 .Principal.Identities.First()
-                .AddClaim(new Claim("urn:blockify:spotify_user_id", user.Id.ToString()));
+                .AddClaim(new Claim("urn:blockify:user_id", user.Id.ToString()));
             await context.SignInAsync("default_cookie", result.Principal!, result.Properties!);
 
             return authData;
@@ -72,16 +85,24 @@ namespace Blockify.Application.Services
 
         private User CreateUser(UserAuthenticationDto authData)
         {
-            return new User()
+            if (_blockifyDbService.UsersExists(authData.User!.Spotify.Id))
             {
-                Id = authData.User!.Id,
-                Spotify = authData.User.Spotify,
-                CreationDate = DateTime.Now,
-                LastRequestDate = DateTime.Now,
+                var existingUser = _blockifyDbService.SelectUserBySpotifyId(
+                    authData.User!.Spotify.Id
+                );
+
+                return existingUser!;
+            }
+
+            var user = new User()
+            {
+                Email = authData.User!.Email,
+                Spotify = authData.User!.Spotify,
             };
 
-            //Check if user exists in database
-            //Save user to database
+            user = _blockifyDbService.InsertUser(user);
+
+            return user;
         }
     }
 }
