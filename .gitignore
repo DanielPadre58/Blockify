@@ -365,9 +365,8 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Local configuration files with secrets
-appsettings.*.Local.json
+*.Local.json
 appsettings.Local.json
 .vscode/launch.json
 .vscode/tasks.json
 Blockify.sln
-Blockify/appsettings.Development.json
