@@ -1,9 +1,10 @@
+using System.Collections;
 using System.Security.Authentication;
 using System.Text.Json;
 using Blockify.Application.DTOs.Authentication;
 using Blockify.Application.Services.Spotify.Client;
 using Blockify.Domain.Database;
-using Blockify.Domain.ExternalEntities.Spotify;
+using static Blockify.Application.Services.Spotify.Mappers.PlaylistDataMapper;
 
 namespace Blockify.Application.Services.Spotify
 {
@@ -21,6 +22,12 @@ namespace Blockify.Application.Services.Spotify
         public async Task<Playlist> GetPlaylistAsync(string playlistId, string accessToken)
         {
             return await _spotifyClient.GetPlaylistAsync(playlistId, accessToken);
+        }
+
+        public async Task<IEnumerable<Playlist>> GetUsersPlaylists(long userId)
+        {
+            var accessToken = _blockifyDbService.GetAccessTokenById(userId);
+            return await _spotifyClient.GetUserPlaylists(accessToken!);
         }
 
         public async Task<TokenDto> RefreshTokenAsync(long userId)

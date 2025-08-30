@@ -1,8 +1,10 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Blockify.Api.Configuration;
 using Blockify.Application.DTOs.Authentication;
-using Blockify.Domain.ExternalEntities.Spotify;
 using Microsoft.Extensions.Options;
+using static Blockify.Application.Services.Spotify.Mappers.PlaylistDataMapper;
+using static Blockify.Application.Services.Spotify.Mappers.UsersPlaylistsMapper;
 
 namespace Blockify.Application.Services.Spotify.Client
 {
@@ -40,6 +42,35 @@ namespace Blockify.Application.Services.Spotify.Client
                 ?? throw new Exception("Failed to deserialize Spotify playlist response.");
 
             return content;
+        }
+
+        public async Task<IEnumerable<Playlist>> GetUserPlaylists(string accessToken)
+        {
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"https://api.spotify.com/v1/me/playlists"
+            );
+
+            request.Headers.Add("Authorization", $"Bearer {accessToken}");
+
+            var response = await _httpClient.SendAsync(request);
+
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var content =
+                JsonSerializer.Deserialize<UsersPlaylistsWrapper>(json)
+                ?? throw new Exception("Failed to deserialize Spotify playlist response.");
+
+            if (content.Items.Count == 0)
+            {
+                throw new Exception("User does not have any playlist saved on his spotify profile");
+            }
+
+            return await Task.WhenAll(
+                content.Items.Select(p => GetPlaylistAsync(p.Id, accessToken))
+            );
         }
 
         public async Task<TokenDto> RefreshTokenAsync(string refreshToken)
