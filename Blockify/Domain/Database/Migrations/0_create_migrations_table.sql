@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS Migrations (
+    id SERIAL PRIMARY KEY,
+    version INT NOT NULL,
+    filename TEXT NOT NULL,
+    applied_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);

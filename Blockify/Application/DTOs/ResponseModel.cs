@@ -1,8 +1,15 @@
-namespace Blockify.Application.DTOs
+using System.Text.Json.Serialization;
+
+namespace Blockify.Application.DTOs;
+
+public record ResponseModel<T>
 {
-    public record ResponseModel<T>(bool Success, string Message, T Data)
-    {
-        public ResponseModel(bool success, string message)
-            : this(success, message, default!) { }
-    }
+    [JsonPropertyName("success")]
+    public bool Success { get; set; } = true;
+    
+    [JsonPropertyName("message")]
+    public string Message { get; set; } = string.Empty;
+    
+    [JsonPropertyName("data")]
+    public T? Data { get; set; }
 }
