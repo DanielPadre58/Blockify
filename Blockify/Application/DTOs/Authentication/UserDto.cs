@@ -1,11 +1,16 @@
+using System.Text.Json.Serialization;
 using static Blockify.Domain.Entities.User;
 
-namespace Blockify.Application.DTOs
+namespace Blockify.Application.DTOs.Authentication;
+
+public record UserDto
 {
-    public record UserDto
-    {
-        public long Id { get; set; }
-        public string Email { get; set; }
-        public SpotifyData Spotify { get; set; }
-    }
+    [JsonPropertyName("user_id")]
+    public long Id { get; set; }
+    
+    [JsonPropertyName("email")]
+    public string Email { get; set; } = string.Empty;
+    
+    [JsonPropertyName("spotify_data")]
+    public SpotifyDto Spotify { get; set; } 
 }
