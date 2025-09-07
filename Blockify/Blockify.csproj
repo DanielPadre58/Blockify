@@ -12,7 +12,10 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.6.9" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Domain\Migrations\*.sql">
+    <None Include="Domain\Database\Migrations\*.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Domain\Database\Queries\*.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
