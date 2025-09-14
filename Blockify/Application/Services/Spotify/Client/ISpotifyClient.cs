@@ -5,9 +5,11 @@ namespace Blockify.Application.Services.Spotify.Client;
 
 public interface ISpotifyClient
 {
-    public Task<TokenDto> RefreshTokenAsync(string refreshToken);
+    public Task<HttpResponseMessage> RefreshTokenAsync(string refreshToken);
 
-    public Task<Playlist> GetPlaylistAsync(string playlistId, string accessToken);
+    public Task<HttpResponseMessage> GetPlaylistAsync(string playlistId, string accessToken);
 
-    public Task<IEnumerable<Playlist>> GetUserPlaylists(string accessToken);
+    public Task<HttpResponseMessage> GetUserPlaylists(string accessToken);
+
+    public Task<HttpResponseMessage> CreateKeywordPlaylist(string accessToken, string userId, string keyword);
 }
