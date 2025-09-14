@@ -14,5 +14,5 @@ public record SpotifyDto
     public required string Username { get; set; }
     
     [JsonPropertyName("token_data")] 
-    public TokenDto Token { get; set; }
+    public required TokenDto Token { get; set; }
 }

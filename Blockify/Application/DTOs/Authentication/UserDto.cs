@@ -9,8 +9,8 @@ public record UserDto
     public long Id { get; set; }
     
     [JsonPropertyName("email")]
-    public string Email { get; set; } = string.Empty;
+    public required string Email { get; set; }
     
     [JsonPropertyName("spotify_data")]
-    public SpotifyDto Spotify { get; set; } 
+    public required SpotifyDto Spotify { get; set; } 
 }
