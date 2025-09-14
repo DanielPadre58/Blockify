@@ -18,8 +18,7 @@ public class UserAuthenticationService : IUserAuthenticationService
 
     public async Task<UserAuthenticationDto> AuthenticateUserAsync(HttpContext context)
     {
-        var result =
-            await context.AuthenticateAsync("spotify")
+        var result = await context.AuthenticateAsync("spotify")
             ?? throw new Exception("Something went wrong during authentication.");
 
         if (!result.Succeeded)
@@ -62,7 +61,7 @@ public class UserAuthenticationService : IUserAuthenticationService
             }
         };
 
-        User user = CreateUser(authData);
+        var user = await CreateUserAsync(authData);
 
         result
             .Principal.Identities.First()
@@ -72,24 +71,22 @@ public class UserAuthenticationService : IUserAuthenticationService
         return authData;
     }
 
-    private User CreateUser(UserAuthenticationDto authData)
+    private async Task<User> CreateUserAsync(UserAuthenticationDto authData)
     {
-        if (_blockifyDbService.UsersExists(authData.User!.Spotify.Id))
-        {
-            var existingUser = _blockifyDbService.SelectUserBySpotifyId(
-                authData.User!.Spotify.Id
-            );
+        var existingUser = await _blockifyDbService.SelectUserBySpotifyIdAsync(
+            authData.User!.Spotify.Id
+        );
 
-            return existingUser!;
-        }
-
+        if (existingUser is not null)
+            return existingUser;
+            
         var user = new User
         {
             Email = authData.User!.Email,
             Spotify = authData.User!.Spotify
         };
 
-        user = _blockifyDbService.InsertUser(user);
+        user = await _blockifyDbService.InsertUserAsync(user);
 
         return user;
     }

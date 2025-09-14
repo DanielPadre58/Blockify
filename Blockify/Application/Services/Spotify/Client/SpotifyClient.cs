@@ -1,9 +1,7 @@
+using System.Text;
 using System.Text.Json;
 using Blockify.Api.Configuration;
-using Blockify.Application.DTOs.Authentication;
 using Microsoft.Extensions.Options;
-using static Blockify.Application.Services.Spotify.Mappers.PlaylistDataMapper;
-using static Blockify.Application.Services.Spotify.Mappers.UsersPlaylistsMapper;
 
 namespace Blockify.Application.Services.Spotify.Client;
 
@@ -21,7 +19,7 @@ public class SpotifyClient : ISpotifyClient
         _spotifyConfiguration = spotifyConfiguration.Value;
     }
 
-    public async Task<Playlist> GetPlaylistAsync(string playlistId, string accessToken)
+    public async Task<HttpResponseMessage> GetPlaylistAsync(string playlistId, string accessToken)
     {
         var request = new HttpRequestMessage(
             HttpMethod.Get,
@@ -34,20 +32,14 @@ public class SpotifyClient : ISpotifyClient
 
         response.EnsureSuccessStatusCode();
 
-        var json = await response.Content.ReadAsStringAsync();
-
-        var content =
-            JsonSerializer.Deserialize<Playlist>(json)
-            ?? throw new Exception("Failed to deserialize Spotify playlist response.");
-
-        return content;
+        return response;
     }
 
-    public async Task<IEnumerable<Playlist>> GetUserPlaylists(string accessToken)
+    public async Task<HttpResponseMessage> GetUserPlaylists(string accessToken)
     {
         var request = new HttpRequestMessage(
             HttpMethod.Get,
-            $"https://api.spotify.com/v1/me/playlists"
+            "https://api.spotify.com/v1/me/playlists"
         );
 
         request.Headers.Add("Authorization", $"Bearer {accessToken}");
@@ -55,24 +47,36 @@ public class SpotifyClient : ISpotifyClient
         var response = await _httpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
-
-        var json = await response.Content.ReadAsStringAsync();
-
-        var content =
-            JsonSerializer.Deserialize<UsersPlaylistsWrapper>(json)
-            ?? throw new Exception("Failed to deserialize Spotify playlist response.");
-
-        if (content.Items.Count == 0)
-        {
-            throw new Exception("User does not have any playlist saved on his spotify profile");
-        }
-
-        return await Task.WhenAll(
-            content.Items.Select(p => GetPlaylistAsync(p.Id, accessToken))
-        );
+        
+        return response;
     }
 
-    public async Task<TokenDto> RefreshTokenAsync(string refreshToken)
+    public async Task<HttpResponseMessage> CreateKeywordPlaylist(string accessToken, string userId, string keyword)
+    {
+        var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            $"https://api.spotify.com/v1/users/{userId}/playlists");
+
+        request.Headers.Add("Authorization", $"Bearer {accessToken}");
+        
+        var requestContent = new Dictionary<string, string>
+        {
+            { "name", keyword },
+            { "description", $"Playlist created by Blockify for songs with {keyword} theme" }
+        };
+        
+        var jsonBody = JsonSerializer.Serialize(requestContent);
+
+        request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        
+        var response = await _httpClient.SendAsync(request);
+        
+        response.EnsureSuccessStatusCode();
+
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> RefreshTokenAsync(string refreshToken)
     {
         var request = new HttpRequestMessage(
             HttpMethod.Post,
@@ -86,26 +90,13 @@ public class SpotifyClient : ISpotifyClient
             { "client_id", _spotifyConfiguration.ClientId },
             { "client_secret", _spotifyConfiguration.ClientSecret },
         };
-
+        
         request.Content = new FormUrlEncodedContent(requestContent);
 
         var response = await _httpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
-
-        var json = await response.Content.ReadAsStringAsync();
-
-        var content =
-            JsonSerializer.Deserialize<TokenDto>(json)
-            ?? throw new Exception("Failed to deserialize Spotify token response.");
-
-        content.ExpiresAt = DateTime.Now.AddSeconds(3600);
-
-        if (content?.RefreshToken == null)
-        {
-            content!.RefreshToken = refreshToken;
-        }
-
-        return content;
+        
+        return response;
     }
 }

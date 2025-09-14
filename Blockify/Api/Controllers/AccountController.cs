@@ -1,6 +1,5 @@
 using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
-using Blockify.Application.Services;
 using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Spotify;
 using Blockify.Shared.Exceptions;
