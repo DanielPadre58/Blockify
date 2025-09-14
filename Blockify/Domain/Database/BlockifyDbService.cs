@@ -123,11 +123,11 @@ public class BlockifyDbService : IBlockifyDbService
         await migrationsBatch.ExecuteNonQueryAsync();
     }
 
-    private User ReadUserQuery(NpgsqlDataReader reader)
+    private async Task<User> ReadUserQueryAsync(NpgsqlDataReader reader)
     {
-        reader.Read();
-
-        return new()
+        await reader.ReadAsync();
+        
+        var user = new User
         {
             Id = Convert.ToInt64(reader["id"]),
             Email = reader["email"].ToString()!,
@@ -146,20 +146,23 @@ public class BlockifyDbService : IBlockifyDbService
             CreationDate = Convert.ToDateTime(reader["created_at"]),
             LastRequestDate = Convert.ToDateTime(reader["updated_at"])
         };
+
+        return user;
     }
 
-    public bool UsersExists(string spotifyId)
+    public async Task<bool> UsersExistsAsync(string spotifyId)
     {
         var sql = ReadFile(GetQueryPath("check_users_table_exists.sql"));
 
-        using var command = new NpgsqlCommand(sql, _connection);
+        await using var command = new NpgsqlCommand(sql, _connection);
         command.Parameters.Add(new("spotifyId", spotifyId));
 
-        var foundUser = command.ExecuteScalar();
-        return foundUser != null;
+        var userExists = (bool)(await command.ExecuteScalarAsync() ?? false);
+        
+        return userExists;
     }
 
-    public User InsertUser(User user)
+    public async Task<User> InsertUserAsync(User user)
     {
         var sql = ReadFile(GetQueryPath("insert_into_users.sql"));
 
@@ -172,54 +175,56 @@ public class BlockifyDbService : IBlockifyDbService
         command.Parameters.Add(new("spotify_access_token", user.Spotify.Token.AccessToken));
         command.Parameters.Add(new("spotify_expires_at", user.Spotify.Token.ExpiresAt));
 
-        return ReadUserQuery(command.ExecuteReader());
+        await using var reader = await command.ExecuteReaderAsync();
+        
+        return await ReadUserQueryAsync(reader);
     }
 
-    public void RefreshAccessToken(long userId, TokenDto token)
+    public async Task RefreshAccessTokenAsync(long userId, TokenDto token)
     {
         var sql = ReadFile(GetQueryPath("refresh_access_token.sql"));
 
-        using var command = new NpgsqlCommand(sql, _connection);
+        await using var command = new NpgsqlCommand(sql, _connection);
         command.Parameters.Add(new("userId", userId));
         command.Parameters.Add(new("refreshToken", token.RefreshToken));
         command.Parameters.Add(new("accessToken", token.AccessToken));
         command.Parameters.Add(new("expiresAt", token.ExpiresAt));
 
-        command.ExecuteNonQuery();
+        await command.ExecuteNonQueryAsync();
     }
 
-    public string? GetAccessTokenById(long userId)
+    public async Task<string?> GetAccessTokenByIdAsync(long userId)
     {
         var sql = ReadFile(GetQueryPath("select_access_token_by_id.sql"));
 
-        using var command = new NpgsqlCommand(sql, _connection);
+        await using var command = new NpgsqlCommand(sql, _connection);
         command.Parameters.Add(new("userId", userId));
 
-        var accessToken = command.ExecuteScalar();
+        var accessToken = await command.ExecuteScalarAsync();
         return accessToken?.ToString();
     }
 
-    public User SelectUserById(long userId)
+    public async Task<User?> SelectUserByIdAsync(long userId)
     {
         var sql = ReadFile(GetQueryPath("select_user_by_id.sql"));
 
-        using var command = new NpgsqlCommand(sql, _connection);
+        await using var command = new NpgsqlCommand(sql, _connection);
         command.Parameters.Add(new("userId", userId));
 
-        using var reader = command.ExecuteReader();
+        await using var reader = command.ExecuteReader();
 
-        return ReadUserQuery(reader);
+        return await ReadUserQueryAsync(reader);
     }
 
-    public User SelectUserBySpotifyId(string spotifyId)
+    public async Task<User?> SelectUserBySpotifyIdAsync(string spotifyId)
     {
         var sql = ReadFile(GetQueryPath("select_user_by_spotify_id.sql"));
 
-        using var command = new NpgsqlCommand(sql, _connection);
+        await using var command = new NpgsqlCommand(sql, _connection);
         command.Parameters.Add(new("spotifyId", spotifyId));
 
-        using var reader = command.ExecuteReader();
+        await using var reader = await command.ExecuteReaderAsync();
 
-        return ReadUserQuery(reader);
+        return await ReadUserQueryAsync(reader);
     }
 }

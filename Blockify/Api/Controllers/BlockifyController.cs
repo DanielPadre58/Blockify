@@ -1,5 +1,4 @@
 using Blockify.Application.DTOs;
-using Blockify.Application.DTOs.Authentication;
 using Blockify.Application.Services.Spotify;
 using Microsoft.AspNetCore.Mvc;
 using static Blockify.Application.Services.Spotify.Mappers.PlaylistDataMapper;
@@ -23,7 +22,7 @@ public class BlockifyController : ControllerBase
         try
         {
             var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
-            var response = await _spotifyService.GetUsersPlaylists(userId);
+            var response = await _spotifyService.GetUsersPlaylistsAsync(userId);
             return Ok(
                 new ResponseModel<IEnumerable<Playlist>>
                 {
@@ -52,7 +51,7 @@ public class BlockifyController : ControllerBase
             var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
             var response = await _spotifyService.GetPlaylistAsync(
                 playlistId,
-                _spotifyService.GetAccessTokenById(userId)
+                await _spotifyService.GetAccessTokenByIdAsync(userId)
             );
             return Ok(
                 new ResponseModel<Playlist>
@@ -69,6 +68,33 @@ public class BlockifyController : ControllerBase
                 {
                     Success = false,
                     Message = "An error occurred while fetching the playlist: " + ex.Message
+                });
+        }
+    }
+
+    [HttpPost("playlist/{keyword}")]
+    public async Task<IActionResult> CreateKeywordPlaylist([FromRoute] string keyword)
+    {
+        try
+        {
+            var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
+            var response = await _spotifyService.CreateKeywordPlaylistAsync(userId, keyword);
+
+            return Ok(
+                new ResponseModel<Playlist>
+                {
+                    Message = $"Playlist with keyword {keyword} successfully created",
+                    Data = response
+                });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new ResponseModel<object>
+                {
+                    Success = false,
+                    Message = "Something went wrong trying to create the keyword playlist " + ex.Message
                 });
         }
     }
