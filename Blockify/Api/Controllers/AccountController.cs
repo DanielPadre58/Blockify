@@ -22,41 +22,6 @@ public class AccountController : ControllerBase
         _spotifyService = spotifyService;
     }
 
-    [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken()
-    {
-        try
-        {
-            var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
-            var token = await _spotifyService.RefreshTokenAsync(userId);
-            return Ok(
-                new ResponseModel<TokenDto>
-                {
-                    Message = "Token refreshed successfully",
-                    Data = token
-                });
-        }
-        catch (AuthenticationException ex)
-        {
-            return BadRequest(
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
-        }
-    }
-
     [HttpGet("spotify")]
     public IActionResult Spotify()
     {
@@ -75,7 +40,7 @@ public class AccountController : ControllerBase
             var result = await _authenticationService.AuthenticateUserAsync(HttpContext);
 
             return Ok(
-                new ResponseModel<UserAuthenticationDto>
+                new ResponseModel<UserDto>
                 {
                     Message = "User authenticated with Spotify successfully",
                     Data = result

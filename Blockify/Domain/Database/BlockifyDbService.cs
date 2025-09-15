@@ -126,6 +126,9 @@ public class BlockifyDbService : IBlockifyDbService
     private async Task<User> ReadUserQueryAsync(NpgsqlDataReader reader)
     {
         await reader.ReadAsync();
+
+        if (!reader.HasRows)
+            throw new Exception("User not found.");
         
         var user = new User
         {
@@ -193,15 +196,26 @@ public class BlockifyDbService : IBlockifyDbService
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<string?> GetAccessTokenByIdAsync(long userId)
+    public async Task<TokenDto> GetTokenByIdAsync(long userId)
     {
-        var sql = ReadFile(GetQueryPath("select_access_token_by_id.sql"));
+        var sql = ReadFile(GetQueryPath("select_token_by_id.sql"));
 
         await using var command = new NpgsqlCommand(sql, _connection);
         command.Parameters.Add(new("userId", userId));
 
-        var accessToken = await command.ExecuteScalarAsync();
-        return accessToken?.ToString();
+        await using var reader = await command.ExecuteReaderAsync();
+
+        await reader.ReadAsync();
+
+        if(!reader.HasRows)
+            throw new Exception("User not found.");
+
+        return new TokenDto
+        {
+            AccessToken = reader["spotify_access_token"].ToString()!,
+            ExpiresAt = Convert.ToDateTime(reader["spotify_expires_at"]),
+            RefreshToken = reader["spotify_refresh_token"].ToString()!
+        };
     }
 
     public async Task<User?> SelectUserByIdAsync(long userId)

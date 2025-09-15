@@ -4,5 +4,6 @@ namespace Blockify.Application.Services.Authentication;
 
 public interface IUserAuthenticationService
 {
-    public Task<UserAuthenticationDto> AuthenticateUserAsync(HttpContext httpContext);
+    public Task<UserDto> AuthenticateUserAsync(HttpContext httpContext);
+    public Task<TokenDto> RefreshTokenAsync(long userId);
 }

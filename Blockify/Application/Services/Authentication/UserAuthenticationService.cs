@@ -1,5 +1,7 @@
 using System.Security.Claims;
+using System.Text.Json;
 using Blockify.Application.DTOs.Authentication;
+using Blockify.Application.Services.Spotify.Client;
 using Blockify.Domain.Database;
 using Blockify.Domain.Entities;
 using Blockify.Shared.Exceptions;
@@ -10,13 +12,15 @@ namespace Blockify.Application.Services.Authentication;
 public class UserAuthenticationService : IUserAuthenticationService
 {
     private readonly IBlockifyDbService _blockifyDbService;
+    private readonly ISpotifyClient _spotifyClient;
 
-    public UserAuthenticationService(IBlockifyDbService blockifyDbService)
+    public UserAuthenticationService(IBlockifyDbService blockifyDbService, ISpotifyClient spotifyClient)
     {
         _blockifyDbService = blockifyDbService;
+        _spotifyClient = spotifyClient;
     }
 
-    public async Task<UserAuthenticationDto> AuthenticateUserAsync(HttpContext context)
+    public async Task<UserDto> AuthenticateUserAsync(HttpContext context)
     {
         var result = await context.AuthenticateAsync("spotify")
             ?? throw new Exception("Something went wrong during authentication.");
@@ -24,39 +28,36 @@ public class UserAuthenticationService : IUserAuthenticationService
         if (!result.Succeeded)
             throw new AuthenticationException("Spotify authentication failed.");
 
-        var authData = new UserAuthenticationDto
+        var authData = new UserDto
         {
-            User = new UserDto
-            {
-                Email =
+            Email =
                     result.Principal?.FindFirst(ClaimTypes.Email)?.Value
                     ?? throw new MissingPrincipalClaimException("email"),
-                Spotify = new SpotifyDto
-                {
-                    Id =
+            Spotify = new SpotifyDto
+            {
+                Id =
                         result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value
                         ?? throw new MissingPrincipalClaimException("spotify:userId"),
-                    Username =
+                Username =
                         result.Principal?.FindFirst(ClaimTypes.Name)?.Value
                         ?? throw new MissingPrincipalClaimException("spotify:username"),
-                    Url =
+                Url =
                         result.Principal?.FindFirst("urn:spotify:url")?.Value
                         ?? throw new MissingPrincipalClaimException("spotify:url"),
-                    Token = new TokenDto
-                    {
-                        RefreshToken =
+                Token = new TokenDto
+                {
+                    RefreshToken =
                             result.Properties?.GetTokenValue("refresh_token")
                             ?? throw new AuthenticationException("Refresh token not found."),
-                        AccessToken =
+                    AccessToken =
                             result.Properties?.GetTokenValue("access_token")
                             ?? throw new AuthenticationException("Access token not found."),
-                        ExpiresAt = Convert.ToDateTime(
+                    ExpiresAt = Convert.ToDateTime(
                             result.Properties?.GetTokenValue("expires_at")
                             ?? throw new AuthenticationException(
                                 "Token expiry information not found"
                             )
                         )
-                    }
                 }
             }
         };
@@ -68,26 +69,66 @@ public class UserAuthenticationService : IUserAuthenticationService
             .AddClaim(new Claim("urn:blockify:user_id", user.Id.ToString()));
         await context.SignInAsync("default_cookie", result.Principal!, result.Properties!);
 
-        return authData;
+        return UserDto.FromEntity(user);
     }
 
-    private async Task<User> CreateUserAsync(UserAuthenticationDto authData)
+    private async Task<User> CreateUserAsync(UserDto authData)
     {
         var existingUser = await _blockifyDbService.SelectUserBySpotifyIdAsync(
-            authData.User!.Spotify.Id
+            authData.Spotify.Id
         );
 
         if (existingUser is not null)
+        {
+            if(existingUser.Spotify.Token.IsAlmostExpired())
+                await RefreshTokenAsync(existingUser.Id);
+
             return existingUser;
+        }
             
         var user = new User
         {
-            Email = authData.User!.Email,
-            Spotify = authData.User!.Spotify
+            Email = authData.Email,
+            Spotify = authData.Spotify
         };
 
         user = await _blockifyDbService.InsertUserAsync(user);
 
         return user;
+    }
+
+    public async Task<TokenDto> RefreshTokenAsync(long userId)
+    {
+        try
+        {
+            var user = await _blockifyDbService.SelectUserByIdAsync(userId);
+
+            var response = await _spotifyClient.RefreshTokenAsync(user!.Spotify.Token.RefreshToken);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var token = JsonSerializer.Deserialize<TokenDto>(json)
+                ?? throw new Exception("Failed to deserialize Spotify token response.");
+
+            //TODO change this forced ahh coding
+            token.ExpiresAt = DateTime.Now.AddSeconds(3600);
+
+            token.RefreshToken ??= user.Spotify.Token.RefreshToken;
+
+            await _blockifyDbService.RefreshAccessTokenAsync(userId, token);
+
+            return token;
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new AuthenticationException(
+                "Spotify authentication failed during token refresh.",
+                ex
+            );
+        }
+        catch (JsonException ex)
+        {
+            throw new Exception("Failed to parse Spotify token response.", ex);
+        }
     }
 }
