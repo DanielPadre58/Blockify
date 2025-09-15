@@ -2,8 +2,10 @@ using System.Security.Authentication;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Blockify.Application.DTOs.Authentication;
+using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Spotify.Client;
 using Blockify.Domain.Database;
+using Microsoft.AspNetCore.Authentication;
 using static Blockify.Application.Services.Spotify.Mappers.PlaylistDataMapper;
 using static Blockify.Application.Services.Spotify.Mappers.UsersPlaylistsMapper;
 
@@ -13,11 +15,13 @@ public class SpotifyService : ISpotifyService
 {
     private readonly ISpotifyClient _spotifyClient;
     private readonly IBlockifyDbService _blockifyDbService;
+    private readonly IUserAuthenticationService _authenticationService;
 
-    public SpotifyService(ISpotifyClient spotifyClient, IBlockifyDbService blockifyDbService)
+    public SpotifyService(ISpotifyClient spotifyClient, IBlockifyDbService blockifyDbService, IUserAuthenticationService authenticationService)
     {
         _spotifyClient = spotifyClient;
         _blockifyDbService = blockifyDbService;
+        _authenticationService = authenticationService;
     }
 
     public async Task<Playlist> GetPlaylistAsync(string playlistId, string accessToken)
@@ -35,10 +39,12 @@ public class SpotifyService : ISpotifyService
 
     public async Task<IEnumerable<Playlist>> GetUsersPlaylistsAsync(long userId)
     {
-        var accessToken = await _blockifyDbService.GetAccessTokenByIdAsync(userId)
-            ?? throw new Exception("Access token not found for the given user ID.");
-        
-        var response = await _spotifyClient.GetUserPlaylists(accessToken);
+        var token = await _blockifyDbService.GetTokenByIdAsync(userId);
+
+        if(token.IsAlmostExpired())
+            token = await _authenticationService.RefreshTokenAsync(userId);
+    
+        var response = await _spotifyClient.GetUserPlaylists(token.AccessToken);
         
         var json = await response.Content.ReadAsStringAsync();
 
@@ -52,7 +58,7 @@ public class SpotifyService : ISpotifyService
         }
 
         return await Task.WhenAll(
-            content.Items.Select(p => GetPlaylistAsync(p.Id, accessToken))
+            content.Items.Select(p => GetPlaylistAsync(p.Id, token.AccessToken))
         );
     }
 
@@ -71,43 +77,10 @@ public class SpotifyService : ISpotifyService
         return playlist;
     }
 
-    public async Task<TokenDto> RefreshTokenAsync(long userId)
-    {
-        try
-        {
-            var user = await _blockifyDbService.SelectUserByIdAsync(userId);
-            
-            var response = await _spotifyClient.RefreshTokenAsync(user!.Spotify.Token.RefreshToken);
-            
-            var json = await response.Content.ReadAsStringAsync();
-
-            var token = JsonSerializer.Deserialize<TokenDto>(json)
-                ?? throw new Exception("Failed to deserialize Spotify token response.");
-
-            token.ExpiresAt = DateTime.Now.AddSeconds(3600);
-            
-            await _blockifyDbService.RefreshAccessTokenAsync(userId, token);
-
-            return token;
-        }
-        catch (HttpRequestException ex)
-        {
-            throw new AuthenticationException(
-                "Spotify authentication failed during token refresh.",
-                ex
-            );
-        }
-        catch (JsonException ex)
-        {
-            throw new Exception("Failed to parse Spotify token response.", ex);
-        }
-    }
-
     public async Task<string> GetAccessTokenByIdAsync(long userId)
     {
-        var accessToken = await _blockifyDbService.GetAccessTokenByIdAsync(userId)
-            ?? throw new Exception("Access token not found for the given user ID.");
+        var token = await _blockifyDbService.GetTokenByIdAsync(userId);
 
-        return accessToken;
+        return token.AccessToken;
     }
 }
