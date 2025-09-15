@@ -10,9 +10,11 @@ public class TokenDto
     [JsonPropertyName("token_type")]
     public string TokenType { get; set; } = "Bearer";
 
-    [JsonPropertyName("expires_at")] 
+    [JsonPropertyName("expires_at")]
     public DateTime ExpiresAt { get; set; } = DateTime.Now;
 
     [JsonPropertyName("refresh_token")]
     public string RefreshToken { get; set; } = null!;
+    
+    public bool IsAlmostExpired() => ExpiresAt.AddMinutes(-5) <= DateTime.Now;
 }
