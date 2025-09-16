@@ -1,6 +1,3 @@
-using Blockify.Application.DTOs.Authentication;
-using static Blockify.Application.Services.Spotify.Mappers.PlaylistDataMapper;
-
 namespace Blockify.Application.Services.Spotify.Client;
 
 public interface ISpotifyClient

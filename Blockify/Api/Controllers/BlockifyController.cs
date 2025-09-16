@@ -1,7 +1,6 @@
 using Blockify.Application.DTOs;
 using Blockify.Application.Services.Spotify;
 using Microsoft.AspNetCore.Mvc;
-using static Blockify.Application.Services.Spotify.Mappers.PlaylistDataMapper;
 
 namespace Blockify.Api.Controllers;
 
@@ -24,7 +23,7 @@ public class BlockifyController : ControllerBase
             var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
             var response = await _spotifyService.GetUsersPlaylistsAsync(userId);
             return Ok(
-                new ResponseModel<IEnumerable<Playlist>>
+                new ResponseModel<IEnumerable<PlaylistDto>>
                 {
                     Message = "User playlists retrieved successfully",
                     Data = response
@@ -54,7 +53,7 @@ public class BlockifyController : ControllerBase
                 await _spotifyService.GetAccessTokenByIdAsync(userId)
             );
             return Ok(
-                new ResponseModel<Playlist>
+                new ResponseModel<PlaylistDto>
                 {
                     Message = "Playlist retrieved successfully",
                     Data = response
@@ -81,7 +80,7 @@ public class BlockifyController : ControllerBase
             var response = await _spotifyService.CreateKeywordPlaylistAsync(userId, keyword);
 
             return Ok(
-                new ResponseModel<Playlist>
+                new ResponseModel<PlaylistDto>
                 {
                     Message = $"Playlist with keyword {keyword} successfully created",
                     Data = response
