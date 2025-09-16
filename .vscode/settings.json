@@ -1,0 +1,9 @@
+{
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.minimap.scale": 2,
+    "window.border": "off",
+    "files.associations": {
+        "*.sql": "postgres"
+    }
+}
