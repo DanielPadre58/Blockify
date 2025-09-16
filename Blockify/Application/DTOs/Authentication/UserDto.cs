@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Blockify.Domain.Entities;
-using static Blockify.Domain.Entities.User;
 
 namespace Blockify.Application.DTOs.Authentication;
 

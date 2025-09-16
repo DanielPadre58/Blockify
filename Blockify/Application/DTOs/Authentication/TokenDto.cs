@@ -15,6 +15,6 @@ public class TokenDto
 
     [JsonPropertyName("refresh_token")]
     public string RefreshToken { get; set; } = null!;
-    
+
     public bool IsAlmostExpired() => ExpiresAt.AddMinutes(-5) <= DateTime.Now;
 }

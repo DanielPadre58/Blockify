@@ -1,4 +1,5 @@
 using System.Text;
+using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Authentication;
 using Blockify.Domain.Entities;
 using Npgsql;
@@ -128,8 +129,8 @@ public class BlockifyDbService : IBlockifyDbService
         await reader.ReadAsync();
 
         if (!reader.HasRows)
-            throw new Exception("User not found.");
-        
+            return null!;
+
         var user = new User
         {
             Id = Convert.ToInt64(reader["id"]),
@@ -153,6 +154,22 @@ public class BlockifyDbService : IBlockifyDbService
         return user;
     }
 
+    private async Task<PlaylistDto> ReadPlaylistQueryAsync(NpgsqlDataReader reader)
+    {
+        await reader.ReadAsync();
+
+        if (!reader.HasRows)
+            return null!;
+
+        return new PlaylistDto
+        {
+            OwnerId = reader["userId"].ToString()!,
+            SpotifyId = reader["spotifyId"].ToString()!,
+            Name = reader["name"].ToString()!,
+            Description = reader["description"].ToString() ?? string.Empty
+        };
+    }
+
     public async Task<bool> UsersExistsAsync(string spotifyId)
     {
         var sql = ReadFile(GetQueryPath("check_users_table_exists.sql"));
@@ -161,7 +178,7 @@ public class BlockifyDbService : IBlockifyDbService
         command.Parameters.Add(new("spotifyId", spotifyId));
 
         var userExists = (bool)(await command.ExecuteScalarAsync() ?? false);
-        
+
         return userExists;
     }
 
@@ -179,7 +196,7 @@ public class BlockifyDbService : IBlockifyDbService
         command.Parameters.Add(new("spotify_expires_at", user.Spotify.Token.ExpiresAt));
 
         await using var reader = await command.ExecuteReaderAsync();
-        
+
         return await ReadUserQueryAsync(reader);
     }
 
@@ -207,7 +224,7 @@ public class BlockifyDbService : IBlockifyDbService
 
         await reader.ReadAsync();
 
-        if(!reader.HasRows)
+        if (!reader.HasRows)
             throw new Exception("User not found.");
 
         return new TokenDto
@@ -240,5 +257,19 @@ public class BlockifyDbService : IBlockifyDbService
         await using var reader = await command.ExecuteReaderAsync();
 
         return await ReadUserQueryAsync(reader);
+    }
+
+    public async Task<PlaylistDto> InsertPlaylistAsync(PlaylistDto playlist)
+    {
+        var sql = ReadFile(GetQueryPath("insert_into_playlists.sql"));
+
+        using var command = new NpgsqlCommand(sql, _connection);
+        command.Parameters.Add(new("id", $"{playlist.OwnerId}:{playlist.SpotifyId}"));
+        command.Parameters.Add(new("userId", playlist.OwnerId));
+        command.Parameters.Add(new("spotifyId", playlist.SpotifyId));
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        return await ReadPlaylistQueryAsync(reader);
     }
 }
