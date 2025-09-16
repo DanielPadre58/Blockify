@@ -1,13 +1,10 @@
-using System.Security.Authentication;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Blockify.Application.DTOs.Authentication;
+using Blockify.Application.DTOs;
 using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Spotify.Client;
+using Blockify.Application.Services.Spotify.Mappers.Multiple;
+using Blockify.Application.Services.Spotify.Mappers.Singular;
 using Blockify.Domain.Database;
-using Microsoft.AspNetCore.Authentication;
-using static Blockify.Application.Services.Spotify.Mappers.PlaylistDataMapper;
-using static Blockify.Application.Services.Spotify.Mappers.UsersPlaylistsMapper;
 
 namespace Blockify.Application.Services.Spotify;
 
@@ -24,32 +21,32 @@ public class SpotifyService : ISpotifyService
         _authenticationService = authenticationService;
     }
 
-    public async Task<Playlist> GetPlaylistAsync(string playlistId, string accessToken)
+    public async Task<PlaylistDto> GetPlaylistAsync(string playlistId, string accessToken)
     {
         var response = await _spotifyClient.GetPlaylistAsync(playlistId, accessToken);
-        
+
         var json = await response.Content.ReadAsStringAsync();
 
         var content =
-            JsonSerializer.Deserialize<Playlist>(json)
+            JsonSerializer.Deserialize<SpotifyPlaylist>(json)
             ?? throw new Exception("Failed to deserialize Spotify playlist response.");
 
-        return content;
+        return SingularSpotifyMapper.ToDto(content);
     }
 
-    public async Task<IEnumerable<Playlist>> GetUsersPlaylistsAsync(long userId)
+    public async Task<IEnumerable<PlaylistDto>> GetUsersPlaylistsAsync(long userId)
     {
         var token = await _blockifyDbService.GetTokenByIdAsync(userId);
 
-        if(token.IsAlmostExpired())
+        if (token.IsAlmostExpired())
             token = await _authenticationService.RefreshTokenAsync(userId);
-    
+
         var response = await _spotifyClient.GetUserPlaylists(token.AccessToken);
-        
+
         var json = await response.Content.ReadAsStringAsync();
 
         var content =
-            JsonSerializer.Deserialize<UsersPlaylistsWrapper>(json)
+            JsonSerializer.Deserialize<UserSpotifyPlaylists>(json)
             ?? throw new Exception("Failed to deserialize Spotify playlist response.");
 
         if (content.Items.Count == 0)
@@ -62,18 +59,21 @@ public class SpotifyService : ISpotifyService
         );
     }
 
-    public async Task<Playlist> CreateKeywordPlaylistAsync(long userId, string keyword)
+    public async Task<PlaylistDto> CreateKeywordPlaylistAsync(long userId, string keyword)
     {
         var user = await _blockifyDbService.SelectUserByIdAsync(userId)
                    ?? throw new Exception("User not found");
-        
+
         var response = await _spotifyClient.CreateKeywordPlaylist(user.Spotify.Token.AccessToken, user.Spotify.Id, keyword);
-        
+
         var json = await response.Content.ReadAsStringAsync();
 
-        var playlist = JsonSerializer.Deserialize<Playlist>(json) 
-                       ?? throw new Exception("Failed to deserialize Spotify newly playlist response.");
-        
+        var playlist = SingularSpotifyMapper.ToDto(
+            JsonSerializer.Deserialize<SpotifyPlaylist>(json)
+                       ?? throw new Exception("Failed to deserialize Spotify newly playlist response."));
+
+        await _blockifyDbService.InsertPlaylistAsync(playlist);
+
         return playlist;
     }
 
