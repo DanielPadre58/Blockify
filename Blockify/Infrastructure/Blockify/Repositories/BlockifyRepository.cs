@@ -177,6 +177,8 @@ public class BlockifyDbService : IBlockifyDbService
         {
             AccessToken = reader["spotify_access_token"].ToString()!,
             ExpiresAt = Convert.ToDateTime(reader["spotify_expires_at"]),
+            ExpiresIn = Convert.ToInt32(
+                (Convert.ToDateTime(reader["spotify_expires_at"]) - DateTime.Now).TotalSeconds),
             RefreshToken = reader["spotify_refresh_token"].ToString()!
         };
     }

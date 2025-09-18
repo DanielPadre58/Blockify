@@ -30,20 +30,16 @@ public class UserAuthenticationService : IUserAuthenticationService
 
         var authData = new UserDto
         {
-            Email =
-                    result.Principal?.FindFirst(ClaimTypes.Email)?.Value
+            Email = result.Principal?.FindFirst(ClaimTypes.Email)?.Value
                         ?? throw new MissingPrincipalClaimException("email"),
             Spotify = new SpotifyDto
             {
-                Id =
-                        result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                            ?? throw new MissingPrincipalClaimException("spotify:userId"),
-                Username =
-                        result.Principal?.FindFirst(ClaimTypes.Name)?.Value
+                Id = result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                        ?? throw new MissingPrincipalClaimException("spotify:userId"),
+                Username = result.Principal?.FindFirst(ClaimTypes.Name)?.Value
                             ?? throw new MissingPrincipalClaimException("spotify:username"),
-                Url =
-                        result.Principal?.FindFirst("urn:spotify:url")?.Value
-                            ?? throw new MissingPrincipalClaimException("spotify:url"),
+                Url = result.Principal?.FindFirst("urn:spotify:url")?.Value
+                        ?? throw new MissingPrincipalClaimException("spotify:url"),
                 Token = new TokenDto
                 {
                     RefreshToken =
@@ -54,13 +50,14 @@ public class UserAuthenticationService : IUserAuthenticationService
                                 ?? throw new AuthenticationException("Access token not found."),
                     ExpiresAt = Convert.ToDateTime(
                             result.Properties?.GetTokenValue("expires_at")
-                                ?? throw new AuthenticationException(
-                                "Token expiry information not found"
-                            )
+                                ?? throw new AuthenticationException("Token expiry information not found")
                         )
                 }
             }
         };
+
+        authData.Spotify.Token.ExpiresIn = Convert.ToInt32(
+            (authData.Spotify.Token.ExpiresAt - DateTime.Now).TotalSeconds);
 
         var user = await CreateUserAsync(authData);
 
@@ -110,8 +107,7 @@ public class UserAuthenticationService : IUserAuthenticationService
             var token = JsonSerializer.Deserialize<TokenDto>(json)
                 ?? throw new Exception("Failed to deserialize Spotify token response.");
 
-            //TODO change this forced ahh coding
-            token.ExpiresAt = DateTime.Now.AddSeconds(3600);
+            token.ExpiresAt = DateTime.Now.AddSeconds(token.ExpiresIn);
 
             token.RefreshToken ??= user.Spotify.Token.RefreshToken;
 

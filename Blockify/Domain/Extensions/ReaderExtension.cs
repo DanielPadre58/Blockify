@@ -23,7 +23,9 @@ public static class ReaderExtension
                 {
                     RefreshToken = data["spotify_refresh_token"].ToString() ?? string.Empty,
                     AccessToken = data["spotify_access_token"].ToString() ?? string.Empty,
-                    ExpiresAt = Convert.ToDateTime(data["spotify_expires_at"])
+                    ExpiresAt = Convert.ToDateTime(data["spotify_expires_at"]),
+                    ExpiresIn = Convert.ToInt32(
+                        (Convert.ToDateTime(data["spotify_expires_at"]) - DateTime.Now).TotalSeconds)
                 }
             }
         };
