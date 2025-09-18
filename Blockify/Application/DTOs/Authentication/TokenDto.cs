@@ -9,6 +9,8 @@ public class TokenDto
 
     [JsonPropertyName("token_type")]
     public string TokenType { get; set; } = "Bearer";
+    [JsonPropertyName("expires_in")]
+    public int ExpiresIn { get; set; }
 
     [JsonPropertyName("expires_at")]
     public DateTime ExpiresAt { get; set; } = DateTime.Now;
