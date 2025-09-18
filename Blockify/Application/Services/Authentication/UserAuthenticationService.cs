@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using System.Text.Json;
 using Blockify.Application.DTOs.Authentication;
-using Blockify.Application.Services.Spotify.Client;
-using Blockify.Domain.Database;
 using Blockify.Domain.Entities;
+using Blockify.Infrastructure.Blockify.Repositories;
+using Blockify.Infrastructure.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 
@@ -32,29 +32,29 @@ public class UserAuthenticationService : IUserAuthenticationService
         {
             Email =
                     result.Principal?.FindFirst(ClaimTypes.Email)?.Value
-                    ?? throw new MissingPrincipalClaimException("email"),
+                        ?? throw new MissingPrincipalClaimException("email"),
             Spotify = new SpotifyDto
             {
                 Id =
                         result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                        ?? throw new MissingPrincipalClaimException("spotify:userId"),
+                            ?? throw new MissingPrincipalClaimException("spotify:userId"),
                 Username =
                         result.Principal?.FindFirst(ClaimTypes.Name)?.Value
-                        ?? throw new MissingPrincipalClaimException("spotify:username"),
+                            ?? throw new MissingPrincipalClaimException("spotify:username"),
                 Url =
                         result.Principal?.FindFirst("urn:spotify:url")?.Value
-                        ?? throw new MissingPrincipalClaimException("spotify:url"),
+                            ?? throw new MissingPrincipalClaimException("spotify:url"),
                 Token = new TokenDto
                 {
                     RefreshToken =
                             result.Properties?.GetTokenValue("refresh_token")
-                            ?? throw new AuthenticationException("Refresh token not found."),
+                                ?? throw new AuthenticationException("Refresh token not found."),
                     AccessToken =
                             result.Properties?.GetTokenValue("access_token")
-                            ?? throw new AuthenticationException("Access token not found."),
+                                ?? throw new AuthenticationException("Access token not found."),
                     ExpiresAt = Convert.ToDateTime(
                             result.Properties?.GetTokenValue("expires_at")
-                            ?? throw new AuthenticationException(
+                                ?? throw new AuthenticationException(
                                 "Token expiry information not found"
                             )
                         )
@@ -67,12 +67,13 @@ public class UserAuthenticationService : IUserAuthenticationService
         result
             .Principal.Identities.First()
             .AddClaim(new Claim("urn:blockify:user_id", user.Id.ToString()));
+
         await context.SignInAsync("default_cookie", result.Principal!, result.Properties!);
 
-        return UserDto.FromEntity(user);
+        return user;
     }
 
-    private async Task<User> CreateUserAsync(UserDto authData)
+    private async Task<UserDto> CreateUserAsync(UserDto authData)
     {
         var existingUser = await _blockifyDbService.SelectUserBySpotifyIdAsync(
             authData.Spotify.Id
@@ -92,9 +93,8 @@ public class UserAuthenticationService : IUserAuthenticationService
             Spotify = authData.Spotify
         };
 
-        user = await _blockifyDbService.InsertUserAsync(user);
-
-        return user;
+        return await _blockifyDbService.InsertUserAsync(user)
+            ?? throw new Exception("Failed to create user.");
     }
 
     public async Task<TokenDto> RefreshTokenAsync(long userId)
@@ -122,9 +122,7 @@ public class UserAuthenticationService : IUserAuthenticationService
         catch (HttpRequestException ex)
         {
             throw new AuthenticationException(
-                "Spotify authentication failed during token refresh.",
-                ex
-            );
+                "Spotify authentication failed during token refresh.", ex);
         }
         catch (JsonException ex)
         {

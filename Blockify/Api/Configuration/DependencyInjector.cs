@@ -1,8 +1,7 @@
-using Blockify.Application.Services;
 using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Spotify;
-using Blockify.Application.Services.Spotify.Client;
-using Blockify.Domain.Database;
+using Blockify.Infrastructure.Blockify.Repositories;
+using Blockify.Infrastructure.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Npgsql;
 

@@ -3,16 +3,14 @@ using System.Text.Json;
 using Blockify.Api.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Blockify.Application.Services.Spotify.Client;
+namespace Blockify.Infrastructure.Spotify.Client;
 
 public class SpotifyClient : ISpotifyClient
 {
     private readonly HttpClient _httpClient;
     private readonly SpotifyConfiguration _spotifyConfiguration;
 
-    public SpotifyClient(
-        HttpClient httpClient,
-        IOptions<SpotifyConfiguration> spotifyConfiguration
+    public SpotifyClient(HttpClient httpClient, IOptions<SpotifyConfiguration> spotifyConfiguration
     )
     {
         _httpClient = httpClient;
@@ -98,5 +96,25 @@ public class SpotifyClient : ISpotifyClient
         response.EnsureSuccessStatusCode();
         
         return response;
+    }
+
+    public async Task AddTracksToPlaylistAsync(string playlistId, IEnumerable<string> trackUris, string accessToken)
+    {
+        var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
+
+        request.Headers.Add("Authorization", $"Bearer {accessToken}");
+
+        var requestContent = new Dictionary<string, IEnumerable<string>>
+        {
+            { "uris", trackUris }
+        };
+
+        var jsonBody = JsonSerializer.Serialize(requestContent);
+
+        request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+        await _httpClient.SendAsync(request);
     }
 }
