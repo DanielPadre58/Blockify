@@ -97,4 +97,32 @@ public class BlockifyController : ControllerBase
                 });
         }
     }
+
+    [HttpPost("playlist/{playlistId}/tracks")]
+    public async Task<IActionResult> AddTracksToPlaylist([FromRoute] string playlistId, [FromBody] IEnumerable<string> trackUris)
+    {
+        try
+        {
+            var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
+            var accessToken = await _spotifyService.GetAccessTokenByIdAsync(userId);
+            await _spotifyService.AddTracksToPlaylistAsync(playlistId, trackUris, accessToken);
+
+            return Ok(
+                new ResponseModel<object>
+                {
+                    Message = $"Tracks successfully added to playlist",
+                    Data = null
+                });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new ResponseModel<object>
+                {
+                    Success = false,
+                    Message = "Something went wrong trying to add tracks to the playlist " + ex.Message
+                });
+        }
+    }
 }

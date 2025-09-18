@@ -1,0 +1,14 @@
+namespace Blockify.Infrastructure.Spotify.Client;
+
+public interface ISpotifyClient
+{
+    public Task<HttpResponseMessage> RefreshTokenAsync(string refreshToken);
+
+    public Task<HttpResponseMessage> GetPlaylistAsync(string playlistId, string accessToken);
+
+    public Task<HttpResponseMessage> GetUserPlaylists(string accessToken);
+
+    public Task<HttpResponseMessage> CreateKeywordPlaylist(string accessToken, string userId, string keyword);
+
+    public Task AddTracksToPlaylistAsync(string playlistId, IEnumerable<string> trackUris, string accessToken);
+}
