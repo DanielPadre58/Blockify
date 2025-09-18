@@ -79,7 +79,7 @@ public class UserAuthenticationService : IUserAuthenticationService
         if (existingUser is not null)
         {
             if(existingUser.Spotify.Token.IsAlmostExpired())
-                await RefreshTokenAsync(existingUser.Id);
+                existingUser.Spotify.Token = await RefreshTokenAsync(existingUser.Id);
 
             return existingUser;
         }
