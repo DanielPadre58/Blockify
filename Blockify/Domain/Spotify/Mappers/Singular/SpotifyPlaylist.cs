@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
+using Blockify.Application.DTOs;
 
-namespace Blockify.Application.Services.Spotify.Mappers.Singular;
+namespace Blockify.Domain.Spotify.Mappers.Singular;
 
 public class SpotifyPlaylist
 {
@@ -18,4 +19,12 @@ public class SpotifyPlaylist
 
     [JsonPropertyName("tracks")]
     public required SpotifyTracks Tracks { get; set; }
+
+    public PlaylistDto ToDto() => new()
+    {
+        OwnerId = Owner.Id,
+        SpotifyId = this.Id,
+        Name = Name,
+        Description = Description ?? string.Empty
+    };
 }

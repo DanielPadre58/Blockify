@@ -1,4 +1,5 @@
 using Blockify.Application.DTOs;
+using Blockify.Application.Exceptions;
 using Blockify.Application.Services.Spotify;
 using Microsoft.AspNetCore.Mvc;
 

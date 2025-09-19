@@ -50,8 +50,7 @@ public class UserAuthenticationService : IUserAuthenticationService
                                 ?? throw new AuthenticationException("Access token not found."),
                     ExpiresAt = Convert.ToDateTime(
                             result.Properties?.GetTokenValue("expires_at")
-                                ?? throw new AuthenticationException("Token expiry information not found")
-                        )
+                                ?? throw new AuthenticationException("Token expiry information not found"))
                 }
             }
         };
@@ -78,12 +77,12 @@ public class UserAuthenticationService : IUserAuthenticationService
 
         if (existingUser is not null)
         {
-            if(existingUser.Spotify.Token.IsAlmostExpired())
+            if (existingUser.Spotify.Token.IsAlmostExpired())
                 existingUser.Spotify.Token = await RefreshTokenAsync(existingUser.Id);
 
             return existingUser;
         }
-            
+
         var user = new User
         {
             Email = authData.Email,
@@ -104,8 +103,7 @@ public class UserAuthenticationService : IUserAuthenticationService
 
             var json = await response.Content.ReadAsStringAsync();
 
-            var token = JsonSerializer.Deserialize<TokenDto>(json)
-                ?? throw new Exception("Failed to deserialize Spotify token response.");
+            var token = JsonMapper<TokenDto>.FromJson(json);
 
             token.ExpiresAt = DateTime.Now.AddSeconds(token.ExpiresIn);
 
