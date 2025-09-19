@@ -1,8 +1,10 @@
 using System.Text.Json;
 using Blockify.Application.DTOs;
+using Blockify.Application.Exceptions;
 using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Spotify.Mappers.Multiple;
-using Blockify.Application.Services.Spotify.Mappers.Singular;
+using Blockify.Domain.Entities;
+using Blockify.Domain.Spotify.Mappers.Singular;
 using Blockify.Infrastructure.Blockify.Repositories;
 using Blockify.Infrastructure.Spotify.Client;
 
@@ -27,11 +29,9 @@ public class SpotifyService : ISpotifyService
 
         var json = await response.Content.ReadAsStringAsync();
 
-        var content =
-            JsonSerializer.Deserialize<SpotifyPlaylist>(json)
-                ?? throw new Exception("Failed to deserialize Spotify playlist response.");
+        var playlist = JsonMapper<SpotifyPlaylist>.FromJson(json).ToDto();
 
-        return SingularSpotifyMapper.ToDto(content);
+        return playlist;
     }
 
     public async Task<IEnumerable<PlaylistDto>> GetUsersPlaylistsAsync(long userId)
@@ -45,14 +45,7 @@ public class SpotifyService : ISpotifyService
 
         var json = await response.Content.ReadAsStringAsync();
 
-        var content =
-            JsonSerializer.Deserialize<UserSpotifyPlaylists>(json)
-                ?? throw new Exception("Failed to deserialize Spotify playlist response.");
-
-        if (content.Items.Count == 0)
-        {
-            throw new Exception("User does not have any playlist saved on his spotify profile");
-        }
+        var content = JsonMapper<UserSpotifyPlaylists>.FromJson(json);
 
         return await Task.WhenAll(
             content.Items.Select(p => GetPlaylistAsync(p.Id, token.AccessToken))
@@ -71,9 +64,7 @@ public class SpotifyService : ISpotifyService
 
         var json = await response.Content.ReadAsStringAsync();
 
-        var playlist = SingularSpotifyMapper.ToDto(
-            JsonSerializer.Deserialize<SpotifyPlaylist>(json)
-                ?? throw new Exception("Failed to deserialize Spotify newly playlist response."));
+        var playlist = JsonMapper<SpotifyPlaylist>.FromJson(json).ToDto();
 
         await _blockifyDbService.InsertPlaylistAsync(playlist);
 
