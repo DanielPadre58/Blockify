@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
+using Blockify.Domain.Entities;
 
-namespace Blockify.Application.Services.Spotify.Mappers.Singular;
+namespace Blockify.Domain.Spotify.Mappers.Singular;
 
 public class SpotifyTracks
 {
