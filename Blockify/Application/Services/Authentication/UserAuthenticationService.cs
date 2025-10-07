@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using System.Text.Json;
 using Blockify.Application.DTOs.Authentication;
+using Blockify.Application.DTOs.Result;
 using Blockify.Domain.Entities;
 using Blockify.Infrastructure.Blockify.Repositories;
+using Blockify.Infrastructure.Exceptions.Blockify;
 using Blockify.Infrastructure.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication;
@@ -11,62 +13,48 @@ namespace Blockify.Application.Services.Authentication;
 
 public class UserAuthenticationService : IUserAuthenticationService
 {
-    private readonly IBlockifyDbService _blockifyDbService;
+    private readonly IBlockifyRepository _blockifyDbService;
     private readonly ISpotifyClient _spotifyClient;
 
-    public UserAuthenticationService(IBlockifyDbService blockifyDbService, ISpotifyClient spotifyClient)
+    public UserAuthenticationService(IBlockifyRepository blockifyDbService, ISpotifyClient spotifyClient)
     {
         _blockifyDbService = blockifyDbService;
         _spotifyClient = spotifyClient;
     }
 
-    public async Task<UserDto> AuthenticateUserAsync(HttpContext context)
+    public async Task<IResult<UserDto>> AuthenticateUserAsync(HttpContext context)
     {
-        var result = await context.AuthenticateAsync("spotify")
-            ?? throw new Exception("Something went wrong during authentication.");
-
-        if (!result.Succeeded)
-            throw new AuthenticationException("Spotify authentication failed.");
-
-        var authData = new UserDto
+        try
         {
-            Email = result.Principal?.FindFirst(ClaimTypes.Email)?.Value
-                        ?? throw new MissingPrincipalClaimException("email"),
-            Spotify = new SpotifyDto
-            {
-                Id = result.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                        ?? throw new MissingPrincipalClaimException("spotify:userId"),
-                Username = result.Principal?.FindFirst(ClaimTypes.Name)?.Value
-                            ?? throw new MissingPrincipalClaimException("spotify:username"),
-                Url = result.Principal?.FindFirst("urn:spotify:url")?.Value
-                        ?? throw new MissingPrincipalClaimException("spotify:url"),
-                Token = new TokenDto
-                {
-                    RefreshToken =
-                            result.Properties?.GetTokenValue("refresh_token")
-                                ?? throw new AuthenticationException("Refresh token not found."),
-                    AccessToken =
-                            result.Properties?.GetTokenValue("access_token")
-                                ?? throw new AuthenticationException("Access token not found."),
-                    ExpiresAt = Convert.ToDateTime(
-                            result.Properties?.GetTokenValue("expires_at")
-                                ?? throw new AuthenticationException("Token expiry information not found"))
-                }
-            }
-        };
+            var result = await context.AuthenticateAsync("spotify")
+                ?? throw new Exception("Something went wrong during authentication.");
 
-        authData.Spotify.Token.ExpiresIn = Convert.ToInt32(
-            (authData.Spotify.Token.ExpiresAt - DateTime.Now).TotalSeconds);
+            if (!result.Succeeded)
+                throw new AuthenticationException("Spotify authentication failed.");
 
-        var user = await CreateUserAsync(authData);
+            var authData = result.ToUserDto();
 
-        result
-            .Principal.Identities.First()
-            .AddClaim(new Claim("urn:blockify:user_id", user.Id.ToString()));
+            authData.Spotify.Token.ExpiresIn = Convert.ToInt32(
+                (authData.Spotify.Token.ExpiresAt - DateTime.Now).TotalSeconds);
 
-        await context.SignInAsync("default_cookie", result.Principal!, result.Properties!);
+            var user = await CreateUserAsync(authData);
 
-        return user;
+            result
+                .Principal.Identities.First()
+                .AddClaim(new Claim("urn:blockify:user_id", user.Id.ToString()));
+
+            await context.SignInAsync("default_cookie", result.Principal!, result.Properties!);
+
+            return new Result<UserDto>(user);
+        }
+        catch (MissingPrincipalClaimException ex)
+        { return new Result<UserDto>(ex); }
+        catch (AuthenticationException ex)
+        { return new Result<UserDto>(ex); }
+        catch (InvalidCommandException ex)
+        { return new Result<UserDto>(ex); }
+        catch (Exception ex)
+        { return new Result<UserDto>(ex); }
     }
 
     private async Task<UserDto> CreateUserAsync(UserDto authData)
