@@ -1,3 +1,4 @@
+using Blockify.Api.Controllers.Communication;
 using Blockify.Application.DTOs;
 using Blockify.Application.Exceptions;
 using Blockify.Application.Services.Spotify;
@@ -9,6 +10,7 @@ namespace Blockify.Api.Controllers;
 [Route("api/[controller]")]
 public class BlockifyController : ControllerBase
 {
+    private const string BlockifyIdUrn = "urn:blockify:user_id";
     private readonly ISpotifyService _spotifyService;
 
     public BlockifyController(ISpotifyService spotifyService)
@@ -16,114 +18,66 @@ public class BlockifyController : ControllerBase
         _spotifyService = spotifyService;
     }
 
-    [HttpGet("user/playlists")]
+    private long GetUserId()
+    {
+        if (!long.TryParse(User.FindFirst(BlockifyIdUrn)?.Value, out var userId))
+            throw new UnauthorizedAccessException("User ID claim missing or invalid");
+
+        return userId;
+    }
+
+    [HttpGet("playlists")]
     public async Task<IActionResult> GetUsersPlaylists()
     {
         try
         {
-            var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
-            var response = await _spotifyService.GetUsersPlaylistsAsync(userId);
+            var userId = GetUserId();
+            var result = await _spotifyService.GetUserPlaylistsAsync(userId);
+
+            if (!result.IsSuccess())
+                throw new UnsuccessfulResultException(result.GetError()!);
+
             return Ok(
-                new ResponseModel<IEnumerable<PlaylistDto>>
-                {
-                    Message = "User playlists retrieved successfully",
-                    Data = response
-                });
+                ResponseModel<IEnumerable<PlaylistDto>>.Ok(result.GetValue()));
         }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = "An error occurred while fetching user playlists: " + ex.Message
-                }
-            );
-        }
+        catch (UnsuccessfulResultException ex)
+        { return this.ErrorResponse(ex.Error.StatusCode, ex.Error); }
     }
 
-    [HttpGet("playlist/{playlistId}")]
-    public async Task<IActionResult> GetPlaylist([FromRoute] string playlistId)
-    {
-        try
-        {
-            var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
-            var response = await _spotifyService.GetPlaylistAsync(
-                playlistId,
-                await _spotifyService.GetAccessTokenByIdAsync(userId)
-            );
-            return Ok(
-                new ResponseModel<PlaylistDto>
-                {
-                    Message = "Playlist retrieved successfully",
-                    Data = response
-                });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = "An error occurred while fetching the playlist: " + ex.Message
-                });
-        }
-    }
-
-    [HttpPost("playlist/{keyword}")]
+    [HttpPost("playlists/{keyword}")]
     public async Task<IActionResult> CreateKeywordPlaylist([FromRoute] string keyword)
     {
         try
         {
-            var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
-            var response = await _spotifyService.CreateKeywordPlaylistAsync(userId, keyword);
+            var userId = GetUserId();
+            var result = await _spotifyService.CreateKeywordPlaylistAsync(userId, keyword);
+
+            if (!result.IsSuccess())
+                throw new UnsuccessfulResultException(result.GetError()!);
 
             return Ok(
-                new ResponseModel<PlaylistDto>
-                {
-                    Message = $"Playlist with keyword {keyword} successfully created",
-                    Data = response
-                });
+                ResponseModel<PlaylistDto>.Ok(result.GetValue()));
         }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = "Something went wrong trying to create the keyword playlist " + ex.Message
-                });
-        }
+        catch (UnsuccessfulResultException ex)
+        { return this.ErrorResponse(ex.Error.StatusCode, ex.Error); }
     }
 
-    [HttpPost("playlist/{playlistId}/tracks")]
+    [HttpPost("playlists/{playlistId}/tracks")]
     public async Task<IActionResult> AddTracksToPlaylist([FromRoute] string playlistId, [FromBody] IEnumerable<string> trackUris)
     {
         try
         {
-            var userId = Convert.ToInt64(User.FindFirst("urn:blockify:user_id")?.Value);
+            var userId = GetUserId();
+            //TODO THE SERVICE CLASS SHOULD BE THE ONE RESPONSIBLE FOR ACCESSING THE TOKEN
             var accessToken = await _spotifyService.GetAccessTokenByIdAsync(userId);
-            await _spotifyService.AddTracksToPlaylistAsync(playlistId, trackUris, accessToken);
+            var result = await _spotifyService.AddTracksToPlaylistAsync(playlistId, trackUris, accessToken);
 
-            return Ok(
-                new ResponseModel<object>
-                {
-                    Message = $"Tracks successfully added to playlist",
-                    Data = null
-                });
+            if (!result.IsSuccess())
+                throw new UnsuccessfulResultException(result.GetError()!);
+
+            return Ok(ResponseModel<object>.Ok());
         }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = "Something went wrong trying to add tracks to the playlist " + ex.Message
-                });
-        }
+        catch (UnsuccessfulResultException ex)
+        { return this.ErrorResponse(ex.Error.StatusCode, ex.Error); }
     }
 }

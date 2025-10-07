@@ -1,8 +1,7 @@
-using Blockify.Application.DTOs;
+using Blockify.Api.Controllers.Communication;
 using Blockify.Application.DTOs.Authentication;
+using Blockify.Application.Exceptions;
 using Blockify.Application.Services.Authentication;
-using Blockify.Application.Services.Spotify;
-using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,83 +13,56 @@ namespace Blockify.Api.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IUserAuthenticationService _authenticationService;
-    private readonly ISpotifyService _spotifyService;
 
-    public AccountController(IUserAuthenticationService service, ISpotifyService spotifyService)
+    public AccountController(IUserAuthenticationService service)
     {
         _authenticationService = service;
-        _spotifyService = spotifyService;
     }
 
     [HttpGet("spotify")]
-    public IActionResult Spotify()
+    public async Task<IActionResult> Spotify()
     {
-        var prop = new AuthenticationProperties { RedirectUri = Url.Action("SignIn") };
+        await HttpContext.SignOutAsync("default_cookie");
 
-        return Challenge(prop, "spotify");
+        var properties = new AuthenticationProperties { RedirectUri = Url.Action("SignIn") };
+
+        return Challenge(properties, "spotify");
     }
 
     [HttpGet("signin")]
     public async Task<IActionResult> SignIn()
     {
-        Logout();
-
         try
         {
             var result = await _authenticationService.AuthenticateUserAsync(HttpContext);
 
-            return Ok(
-                new ResponseModel<UserDto>
-                {
-                    Message = "User authenticated with Spotify successfully",
-                    Data = result
-                });
+            if (!result.IsSuccess())
+                throw new UnsuccessfulResultException(result.GetError()!);
+
+            return Ok(ResponseModel<UserDto>.Ok(result.GetValue()));
         }
-        catch (MissingPrincipalClaimException ex)
-        {
-            return BadRequest(
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
-        }
-        catch (AuthenticationException ex)
-        {
-            return Unauthorized(
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new ResponseModel<object>
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
-        }
+        catch (UnsuccessfulResultException ex)
+        { return this.ErrorResponse(ex.Error.StatusCode, ex.Error); }
     }
 
     [HttpGet("logout")]
     [Authorize]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
-        return SignOut("default_cookie");
+        await HttpContext.SignOutAsync("default_cookie");
+        return Ok(ResponseModel<object>.Ok("Logged out"));
     }
 
     [HttpGet("denied")]
     public IActionResult AccessDenied()
     {
         return Unauthorized(
-            new ResponseModel<object>
-            {
-                Success = false,
-                Message = "Access denied"
-            });
+            ResponseModel<object>.Fail(
+                new Error()
+                {
+                    Code = "ACCESS_DENIED",
+                    Details = "You were denied of accessing this resource"
+                }
+        ));
     }
 }
