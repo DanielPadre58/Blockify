@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Blockify.Api.Configuration;
-using Blockify.Infrastructure.Spotify.Exceptions;
+using Blockify.Infrastructure.Exceptions.Spotify;
 using Microsoft.Extensions.Options;
 using Blockify.Infrastructure.Tools.Extensions;
 
@@ -23,7 +23,7 @@ public class SpotifyClient : ISpotifyClient
     {
         if (!response.IsSuccessStatusCode)
         {
-            var spotifyMessage = await response.GetErrorMessageAsync();
+            var spotifyMessage = await response.GetErrorMessageAsync() ?? "No error message found on Spotify API response";
             var statusCode = (int)response.StatusCode;
             var uri = request.RequestUri?.ToString();
 
@@ -60,7 +60,7 @@ public class SpotifyClient : ISpotifyClient
         var requestUri = "https://api.spotify.com/v1/me/playlists";
         var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
         request.Headers.Add("Authorization", $"Bearer {accessToken}");
-
+        
         var response = await _httpClient.SendAsync(request);
         await VerifyResponseAsync(response, request);
 
