@@ -29,10 +29,19 @@ namespace Blockify.Domain.Entities
             return JsonSerializer.Serialize(structure, _options);
         }
 
+        public static string ToJson(T item)
+        {
+            var props = typeof(T).GetProperties()
+                .Where(p => p.CanRead && p.Name != nameof(Exception.Message))
+                .ToDictionary(p => p.Name, p => p.GetValue(item));
+
+            return JsonSerializer.Serialize(props, _options);
+        }
+
         public static T FromJson(string json)
         {
             return JsonSerializer.Deserialize<T>(json, _options)
-                ?? throw new FailedJsonSerializationException<T>(
+                ?? throw new FailedJsonSerializationException(
                     $"Failed to deserialize json to {typeof(T).Name}", json);
         }
     }
