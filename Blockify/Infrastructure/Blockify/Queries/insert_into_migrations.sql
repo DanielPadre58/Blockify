@@ -1,2 +1,2 @@
 INSERT INTO Migrations (version, filename)
-VALUES ((@version), (@filename));
+VALUES ((@version), (@name));
