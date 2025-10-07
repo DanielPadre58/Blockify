@@ -1,11 +1,13 @@
-using System.Text.Json;
 using Blockify.Application.DTOs;
+using Blockify.Application.DTOs.Result;
 using Blockify.Application.Exceptions;
 using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Spotify.Mappers.Multiple;
 using Blockify.Domain.Entities;
 using Blockify.Domain.Spotify.Mappers.Singular;
 using Blockify.Infrastructure.Blockify.Repositories;
+using Blockify.Infrastructure.Exceptions.Blockify;
+using Blockify.Infrastructure.Exceptions.Spotify;
 using Blockify.Infrastructure.Spotify.Client;
 
 namespace Blockify.Application.Services.Spotify;
@@ -13,13 +15,13 @@ namespace Blockify.Application.Services.Spotify;
 public class SpotifyService : ISpotifyService
 {
     private readonly ISpotifyClient _spotifyClient;
-    private readonly IBlockifyDbService _blockifyDbService;
+    private readonly IBlockifyRepository _blockifyRepo;
     private readonly IUserAuthenticationService _authenticationService;
 
-    public SpotifyService(ISpotifyClient spotifyClient, IBlockifyDbService blockifyDbService, IUserAuthenticationService authenticationService)
+    public SpotifyService(ISpotifyClient spotifyClient, IBlockifyRepository blockifyDbService, IUserAuthenticationService authenticationService)
     {
         _spotifyClient = spotifyClient;
-        _blockifyDbService = blockifyDbService;
+        _blockifyRepo = blockifyDbService;
         _authenticationService = authenticationService;
     }
 
@@ -34,53 +36,94 @@ public class SpotifyService : ISpotifyService
         return playlist;
     }
 
-    public async Task<IEnumerable<PlaylistDto>> GetUsersPlaylistsAsync(long userId)
+    public async Task<IResult<IEnumerable<PlaylistDto>>> GetUserPlaylistsAsync(long userId)
     {
-        var token = await _blockifyDbService.GetTokenByIdAsync(userId);
+        try
+        {
+            var token = await _blockifyRepo.GetTokenByIdAsync(userId)
+            ?? throw new ResourceNotFoundException($"There's no Spotify token associated with the user {userId}", "Spotify.Token");
 
-        if (token.IsAlmostExpired())
-            token = await _authenticationService.RefreshTokenAsync(userId);
+            if (token.IsAlmostExpired())
+                token = await _authenticationService.RefreshTokenAsync(userId);
 
-        var response = await _spotifyClient.GetUserPlaylists(token.AccessToken);
+            var response = await _spotifyClient.GetUserPlaylists(token.AccessToken);
 
-        var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync();
 
-        var content = JsonMapper<UserSpotifyPlaylists>.FromJson(json);
+            var content = JsonMapper<UserSpotifyPlaylists>.FromJson(json);
 
-        return await Task.WhenAll(
-            content.Items.Select(p => GetPlaylistAsync(p.Id, token.AccessToken))
-        );
+            return new Result<IEnumerable<PlaylistDto>>(
+                await Task.WhenAll(
+                    content.Items.Select(async p => await GetPlaylistAsync(p.Id, token.AccessToken))));
+        }
+        catch (ResourceNotFoundException ex)
+        { return new Result<IEnumerable<PlaylistDto>>(ex); }
+        catch (InvalidCommandException ex)
+        { return new Result<IEnumerable<PlaylistDto>>(ex); }
+        catch (SpotifyHttpRequestException ex)
+        { return new Result<IEnumerable<PlaylistDto>>(ex); }
+        catch (FailedJsonSerializationException ex)
+        { return new Result<IEnumerable<PlaylistDto>>(ex); }
+        catch (Exception ex)
+        { return new Result<IEnumerable<PlaylistDto>>(ex); }
     }
 
-    public async Task<PlaylistDto> CreateKeywordPlaylistAsync(long userId, string keyword)
+    public async Task<IResult<PlaylistDto>> CreateKeywordPlaylistAsync(long userId, string keyword)
     {
-        var user = (await _blockifyDbService.SelectUserByIdAsync(userId))
-            ?? throw new Exception("User not found");
+        try
+        {
+            var user = (await _blockifyRepo.SelectUserByIdAsync(userId))
+                        ?? throw new Exception("User not found");
 
-        if (user.Spotify.Token.IsAlmostExpired())
-            user.Spotify.Token = await _authenticationService.RefreshTokenAsync(userId);
+            if (user.Spotify.Token.IsAlmostExpired())
+                user.Spotify.Token = await _authenticationService.RefreshTokenAsync(userId);
 
-        var response = await _spotifyClient.CreateKeywordPlaylist(user.Spotify.Token.AccessToken, user.Spotify.Id, keyword);
+            var response = await _spotifyClient.CreateKeywordPlaylist(user.Spotify.Token.AccessToken, user.Spotify.Id, keyword);
 
-        var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync();
 
-        var playlist = JsonMapper<SpotifyPlaylist>.FromJson(json).ToDto();
+            var playlist = JsonMapper<SpotifyPlaylist>.FromJson(json).ToDto();
 
-        await _blockifyDbService.InsertPlaylistAsync(playlist);
+            await _blockifyRepo.InsertPlaylistAsync(playlist);
 
-        return playlist;
+            return new Result<PlaylistDto>(playlist);
+        }
+        catch (ResourceNotFoundException ex)
+        { return new Result<PlaylistDto>(ex); }
+        catch (InvalidCommandException ex)
+        { return new Result<PlaylistDto>(ex); }
+        catch (SpotifyHttpRequestException ex)
+        { return new Result<PlaylistDto>(ex); }
+        catch (FailedJsonSerializationException ex)
+        { return new Result<PlaylistDto>(ex); }
+        catch (Exception ex)
+        { return new Result<PlaylistDto>(ex); }
     }
 
     public async Task<string> GetAccessTokenByIdAsync(long userId)
     {
-        var token = await _blockifyDbService.GetTokenByIdAsync(userId);
+        var token = await _blockifyRepo.GetTokenByIdAsync(userId);
 
-        return token.AccessToken;
+        return token?.AccessToken ?? throw new Exception("Token not found");
     }
 
-    public async Task AddTracksToPlaylistAsync(string playlistId, IEnumerable<string> trackUris, string accessToken)
+    public async Task<IResult<object>> AddTracksToPlaylistAsync(string playlistId, IEnumerable<string> trackUris, string accessToken)
     {
-        await _spotifyClient.AddTracksToPlaylistAsync(playlistId, trackUris, accessToken);
+        try
+        {
+            await _spotifyClient.AddTracksToPlaylistAsync(playlistId, trackUris, accessToken);
+            return new Result<object>();
+        }
+        catch (ResourceNotFoundException ex)
+        { return new Result<object>(ex); }
+        catch (InvalidCommandException ex)
+        { return new Result<object>(ex); }
+        catch (SpotifyHttpRequestException ex)
+        { return new Result<object>(ex); }
+        catch (FailedJsonSerializationException ex)
+        { return new Result<object>(ex); }
+        catch (Exception ex)
+        { return new Result<object>(ex); }
     }
 }
 
