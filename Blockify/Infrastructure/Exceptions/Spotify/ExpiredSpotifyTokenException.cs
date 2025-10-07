@@ -1,4 +1,4 @@
-namespace Blockify.Infrastructure.Spotify.Exceptions;
+namespace Blockify.Infrastructure.Exceptions.Spotify;
 
 public class ExpiredSpotifyTokenException : SpotifyHttpRequestException
 {
