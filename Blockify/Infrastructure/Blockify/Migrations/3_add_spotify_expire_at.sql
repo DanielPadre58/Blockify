@@ -1,2 +1,0 @@
-ALTER TABLE Users
-ADD spotify_expires_at TIMESTAMPTZ NOT NULL;

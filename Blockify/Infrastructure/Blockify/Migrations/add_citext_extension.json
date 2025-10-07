@@ -1,0 +1,5 @@
+{
+    "name": "Add citext Extension",
+    "version": 1,
+    "sql": "CREATE EXTENSION IF NOT EXISTS citext;"
+}

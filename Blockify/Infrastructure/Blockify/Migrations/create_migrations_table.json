@@ -1,0 +1,5 @@
+{
+    "name": "Create Migrations Table",
+    "version": 0,
+    "sql": "CREATE TABLE IF NOT EXISTS Migrations (version INT PRIMARY KEY, filename TEXT NOT NULL, applied_at TIMESTAMPTZ DEFAULT NOW() NOT NULL );"
+}

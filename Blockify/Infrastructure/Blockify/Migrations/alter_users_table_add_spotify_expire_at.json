@@ -1,0 +1,5 @@
+{
+    "name": "Alter Users Table, Add Spotify Expires At",
+    "version": 3,
+    "sql": "ALTER TABLE Users ADD COLUMN IF NOT EXISTS spotify_expires_at TIMESTAMPTZ NOT NULL;"
+}
