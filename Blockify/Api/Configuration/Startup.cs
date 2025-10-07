@@ -1,4 +1,5 @@
 using Blockify.Api.Configuration;
+using Blockify.Infrastructure.Blockify.Repositories;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,13 @@ if (app.Environment.IsDevelopment())
 }
 
 configurator.Configure(app);
+
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var migrationManager = scope.ServiceProvider.GetRequiredService<IBlockifyMigrationsManager>();
+    await migrationManager.ApplyMigrationsAsync();
+}
 
 app.Run();
