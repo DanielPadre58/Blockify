@@ -1,12 +1,9 @@
-using System.Data.SqlTypes;
-using Blockify.Domain.Entities;
-
 namespace Blockify.Application.Exceptions;
 
-public class FailedJsonSerializationException<T> : Exception
+public class FailedJsonSerializationException : Exception
 {
     public string OriginalJson { get; }
-    public string ModelStructureJson { get; } = JsonMapper<T>.ToJson();
+    public readonly int _statusCode = StatusCodes.Status500InternalServerError;
 
     public FailedJsonSerializationException(string message)
         : this(message, string.Empty, null) { }
