@@ -12,7 +12,7 @@ public static class DependencyInjector
     public static void Inject(IServiceCollection services, IConfiguration configuration)
     {
         var test = configuration.GetConnectionString("BlockifyDb");
-        services.AddScoped<IBlockifyDbService, BlockifyDbService>(options =>
+        services.AddScoped<IBlockifyRepository, BlockifyRepository>(options =>
         {
             var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(
                 configuration.GetConnectionString("BlockifyDb")
@@ -20,10 +20,20 @@ public static class DependencyInjector
                     "\"BlockifyDb\" connection string"
                 )
             );
-            return new BlockifyDbService(npgsqlDataSourceBuilder);
+            return new BlockifyRepository(npgsqlDataSourceBuilder);
         });
         services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
         services.AddHttpClient<ISpotifyClient, SpotifyClient>();
         services.AddScoped<ISpotifyService, SpotifyService>();
+        services.AddScoped<IBlockifyMigrationsManager, BlockifyMigrationsManager>(options =>
+        {
+            var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(
+                configuration.GetConnectionString("BlockifyDb")
+                ?? throw new MissingConfigurationException(
+                    "\"BlockifyDb\" connection string"
+                )
+            );
+            return new BlockifyMigrationsManager(npgsqlDataSourceBuilder);
+        });
     }
 }
