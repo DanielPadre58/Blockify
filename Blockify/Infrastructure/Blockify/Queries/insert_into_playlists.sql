@@ -1,3 +1,3 @@
-INSERT INTO Playlists (id, owner_id, spotify_id)
-VALUES ((@id), (@userId), (@spotifyId))
+INSERT INTO Playlists (id, owner_id, spotify_id, keyword)
+VALUES ((@id), (@userId), (@spotifyId), (@keyword))
 RETURNING *;
