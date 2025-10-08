@@ -1,6 +1,7 @@
 using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Spotify;
 using Blockify.Infrastructure.Blockify.Repositories;
+using Blockify.Infrastructure.Gemini;
 using Blockify.Infrastructure.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Npgsql;
@@ -11,7 +12,6 @@ public static class DependencyInjector
 {
     public static void Inject(IServiceCollection services, IConfiguration configuration)
     {
-        var test = configuration.GetConnectionString("BlockifyDb");
         services.AddScoped<IBlockifyRepository, BlockifyRepository>(options =>
         {
             var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(
@@ -35,5 +35,6 @@ public static class DependencyInjector
             );
             return new BlockifyMigrationsManager(npgsqlDataSourceBuilder);
         });
+        services.AddHttpClient<IGeminiClient, GeminiClient>();
     }
 }
