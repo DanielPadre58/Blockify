@@ -2,4 +2,5 @@
 
 public interface IBlockifyService
 {
+    public Task<IEnumerable<string>> GetAllUsersKeywords(string userId);
 }
