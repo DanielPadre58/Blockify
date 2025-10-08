@@ -8,7 +8,7 @@ namespace Blockify.Domain.Extensions;
 
 public static class ReaderExtension
 {
-    public async static Task<UserDto?> ReadUserAsync(this NpgsqlDataReader data)
+    public static async Task<UserDto?> ReadUserAsync(this NpgsqlDataReader data)
     {
         try
         {
@@ -45,7 +45,7 @@ public static class ReaderExtension
         }
     }
 
-    public async static Task<TokenDto?> ReadTokenAsync(this NpgsqlDataReader data)
+    public static async Task<TokenDto?> ReadTokenAsync(this NpgsqlDataReader data)
     {
         await data.ReadAsync();
 
@@ -62,7 +62,7 @@ public static class ReaderExtension
         };
     }
     
-    public async static Task<PlaylistDto> ReadPlaylistAsync(this NpgsqlDataReader data)
+    public static async Task<PlaylistDto> ReadPlaylistAsync(this NpgsqlDataReader data)
     {
         await data.ReadAsync();
 
@@ -70,6 +70,24 @@ public static class ReaderExtension
         {
             OwnerId = data["owner_id"].ToString() ?? string.Empty,
             SpotifyId = data["spotify_id"].ToString() ?? string.Empty,
+            Name = data["keyword"].ToString() ?? string.Empty,
         };
+    }
+    
+    public static async Task<List<PlaylistDto>> ReadPlaylistsAsync(this NpgsqlDataReader data)
+    {
+        var playlists = new List<PlaylistDto>();
+
+        while (await data.ReadAsync())
+        {
+            playlists.Add(new PlaylistDto
+            {
+                OwnerId = data["owner_id"].ToString() ?? string.Empty,
+                SpotifyId = data["spotify_id"].ToString() ?? string.Empty,
+                Name = data["keyword"].ToString() ?? string.Empty,
+            });
+        }
+
+        return playlists;
     }
 }
