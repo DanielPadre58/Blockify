@@ -1,0 +1,5 @@
+﻿{
+  "name": "Alter Playlists Table, Add keyword",
+  "version": 5,
+  "sql": "ALTER TABLE Playlists ADD COLUMN IF NOT EXISTS keyword TEXT NOT NULL;"
+}

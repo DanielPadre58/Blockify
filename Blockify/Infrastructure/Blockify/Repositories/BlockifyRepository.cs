@@ -20,19 +20,6 @@ public class BlockifyRepository : IBlockifyRepository
                 .OpenConnection();
     }
 
-    public async Task<bool> UsersExistsAsync(string spotifyId)
-    {
-        var sql = await ReadFileAsync(
-            GetPath("check_users_table_exists.sql"));
-
-        await using var command = new NpgsqlCommand(sql, _connection);
-        command.Parameters.Add(new("spotifyId", spotifyId));
-
-        var userExists = (bool)(await command.ExecuteScalarAsync() ?? false);
-
-        return userExists;
-    }
-
     public async Task<UserDto?> InsertUserAsync(User user)
     {
         var sql = await ReadFileAsync(
@@ -110,7 +97,7 @@ public class BlockifyRepository : IBlockifyRepository
             GetPath("select_user_by_spotify_id.sql"));
 
         await using var command = new NpgsqlCommand(sql, _connection);
-        command.Parameters.Add(new("spotifyId", spotifyId));
+        command.Parameters.Add(new NpgsqlParameter("spotifyId", spotifyId));
 
         await using var reader = await command.ExecuteReaderAsync();
 
@@ -122,13 +109,27 @@ public class BlockifyRepository : IBlockifyRepository
         var sql = await ReadFileAsync(
             GetPath("insert_into_playlists.sql"));
 
-        using var command = new NpgsqlCommand(sql, _connection);
+        await using var command = new NpgsqlCommand(sql, _connection);
         command.Parameters.Add(new NpgsqlParameter("id", $"{playlist.OwnerId}:{playlist.SpotifyId}"));
         command.Parameters.Add(new NpgsqlParameter("userId", playlist.OwnerId));
         command.Parameters.Add(new NpgsqlParameter("spotifyId", playlist.SpotifyId));
+        command.Parameters.Add(new NpgsqlParameter("keyword", playlist.Name));
 
         await using var reader = await command.ExecuteReaderAsync();
 
         return await reader.ReadPlaylistAsync();
+    }
+
+    public async Task<List<PlaylistDto>> SelectPlaylistsAsync(string userId)
+    {
+        var sql = await ReadFileAsync(
+            GetPath("select_all_users_playlists_by_id.sql"));
+
+        await using var command = new NpgsqlCommand(sql, _connection);
+        command.Parameters.Add(new NpgsqlParameter("userId", userId));
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        return await reader.ReadPlaylistsAsync();
     }
 }

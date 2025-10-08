@@ -1,3 +1,3 @@
 SELECT * 
 FROM Users
-WHERE spotify_id = @spotifyId;
+WHERE spotify_id = (@spotifyId);

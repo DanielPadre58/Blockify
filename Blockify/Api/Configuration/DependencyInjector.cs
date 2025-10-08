@@ -1,6 +1,8 @@
 using Blockify.Application.Services.Authentication;
+using Blockify.Application.Services.Blockify;
 using Blockify.Application.Services.Spotify;
 using Blockify.Infrastructure.Blockify.Repositories;
+using Blockify.Infrastructure.Gemini;
 using Blockify.Infrastructure.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Npgsql;
@@ -11,20 +13,10 @@ public static class DependencyInjector
 {
     public static void Inject(IServiceCollection services, IConfiguration configuration)
     {
-        var test = configuration.GetConnectionString("BlockifyDb");
-        services.AddScoped<IBlockifyRepository, BlockifyRepository>(options =>
-        {
-            var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(
-                configuration.GetConnectionString("BlockifyDb")
-                ?? throw new MissingConfigurationException(
-                    "\"BlockifyDb\" connection string"
-                )
-            );
-            return new BlockifyRepository(npgsqlDataSourceBuilder);
-        });
+        
         services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
-        services.AddHttpClient<ISpotifyClient, SpotifyClient>();
         services.AddScoped<ISpotifyService, SpotifyService>();
+        services.AddScoped<IBlockifyService, BlockifyService>();
         services.AddScoped<IBlockifyMigrationsManager, BlockifyMigrationsManager>(options =>
         {
             var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(
@@ -35,5 +27,17 @@ public static class DependencyInjector
             );
             return new BlockifyMigrationsManager(npgsqlDataSourceBuilder);
         });
+        services.AddScoped<IBlockifyRepository, BlockifyRepository>(options =>
+        {
+            var npgsqlDataSourceBuilder = new NpgsqlDataSourceBuilder(
+                configuration.GetConnectionString("BlockifyDb")
+                ?? throw new MissingConfigurationException(
+                    "\"BlockifyDb\" connection string"
+                )
+            );
+            return new BlockifyRepository(npgsqlDataSourceBuilder);
+        });
+        services.AddHttpClient<ISpotifyClient, SpotifyClient>();
+        services.AddHttpClient<IGeminiClient, GeminiClient>();
     }
 }

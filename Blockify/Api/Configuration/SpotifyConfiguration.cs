@@ -2,6 +2,6 @@ namespace Blockify.Api.Configuration;
 
 public record SpotifyConfiguration
 {
-    public string ClientId { get; set; } = string.Empty;
-    public string ClientSecret { get; set; } = string.Empty;
+    public required string ClientId { get; init; }
+    public required string ClientSecret { get; init; }
 }

@@ -12,4 +12,5 @@ public interface IBlockifyRepository
     public Task<UserDto?> SelectUserByIdAsync(long userId);
     public Task<UserDto?> SelectUserBySpotifyIdAsync(string userId);
     public Task<PlaylistDto?> InsertPlaylistAsync(PlaylistDto playlist);
+    public Task<List<PlaylistDto>> SelectPlaylistsAsync(string userId);
 }
