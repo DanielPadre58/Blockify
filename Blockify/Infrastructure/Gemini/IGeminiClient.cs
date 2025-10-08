@@ -2,5 +2,5 @@
 
 public interface IGeminiClient
 {
-    
+    Task<HttpResponseMessage> GenerateTextAsync(string prompt);
 }
