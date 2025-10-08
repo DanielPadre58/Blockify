@@ -29,6 +29,9 @@ public class ApplicationConfigurator
         _services.Configure<SpotifyConfiguration>(
             _configuration.GetSection("Api:OAuth:Spotify")
         );
+        _services.Configure<GeminiConfiguration>(
+            _configuration.GetSection("Api:AI:Gemini")
+        );
     }
 
     private static Action<CookieAuthenticationOptions> CookieOptions()
