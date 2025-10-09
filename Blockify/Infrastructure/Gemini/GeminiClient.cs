@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Blockify.Api.Configuration;
+using Blockify.Api.Configuration.External_Services_Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Blockify.Infrastructure.Gemini;

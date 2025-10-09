@@ -3,6 +3,7 @@ using Blockify.Application.Services.Blockify;
 using Blockify.Application.Services.Spotify;
 using Blockify.Infrastructure.Blockify.Repositories;
 using Blockify.Infrastructure.Gemini;
+using Blockify.Infrastructure.Genius;
 using Blockify.Infrastructure.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Npgsql;
@@ -39,5 +40,6 @@ public static class DependencyInjector
         });
         services.AddHttpClient<ISpotifyClient, SpotifyClient>();
         services.AddHttpClient<IGeminiClient, GeminiClient>();
+        services.AddHttpClient<IGeniusClient, GeniusClient>();
     }
 }
