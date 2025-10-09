@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AspNet.Security.OAuth.Spotify;
+using Blockify.Api.Configuration.External_Services_Configuration;
 using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -31,6 +32,9 @@ public class ApplicationConfigurator
         );
         _services.Configure<GeminiConfiguration>(
             _configuration.GetSection("Api:AI:Gemini")
+        );
+        _services.Configure<GeniusConfiguration>(
+            _configuration.GetSection("Api:Lyrics:Genius")
         );
     }
 

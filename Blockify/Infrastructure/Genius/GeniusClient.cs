@@ -1,4 +1,4 @@
-﻿using Blockify.Api.Configuration;
+﻿using Blockify.Api.Configuration.External_Services_Configuration;
 
 namespace Blockify.Infrastructure.Genius;
 

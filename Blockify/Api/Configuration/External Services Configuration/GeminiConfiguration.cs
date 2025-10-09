@@ -1,4 +1,4 @@
-﻿namespace Blockify.Api.Configuration;
+﻿namespace Blockify.Api.Configuration.External_Services_Configuration;
 
 public record GeminiConfiguration
 {

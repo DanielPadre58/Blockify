@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.Json;
-using Blockify.Api.Configuration;
+using Blockify.Api.Configuration.External_Services_Configuration;
 using Blockify.Infrastructure.Exceptions.Spotify;
 using Microsoft.Extensions.Options;
 using Blockify.Infrastructure.Tools.Extensions;
