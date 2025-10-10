@@ -1,9 +1,8 @@
 using System.Text.Json.Serialization;
-using Blockify.Domain.Entities;
 
-namespace Blockify.Domain.Spotify.Mappers.Singular;
+namespace Blockify.Infrastructure.External.Spotify.Mappers.Singular;
 
-public class SpotifyOwner
+public abstract class SpotifyOwner
 {
     [JsonPropertyName("id")]
     public required string Id { get; init; }

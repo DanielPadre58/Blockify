@@ -1,9 +1,8 @@
 using System.Text.Json.Serialization;
-using Blockify.Domain.Entities;
 
-namespace Blockify.Domain.Spotify.Mappers.Singular;
+namespace Blockify.Infrastructure.External.Spotify.Mappers.Singular;
 
-public class SpotifyTrackObject
+public abstract class SpotifyTrackObject
 {
     [JsonPropertyName("track")]
     public required SpotifyTrack Track { get; init; }
