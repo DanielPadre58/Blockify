@@ -1,4 +1,4 @@
-namespace Blockify.Infrastructure.Spotify.Client;
+namespace Blockify.Infrastructure.External.Spotify.Client;
 
 public interface ISpotifyClient
 {

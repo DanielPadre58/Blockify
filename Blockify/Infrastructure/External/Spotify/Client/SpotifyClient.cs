@@ -1,29 +1,26 @@
 using System.Text;
 using System.Text.Json;
-using Blockify.Api.Configuration.External_Services_Configuration;
 using Blockify.Infrastructure.Exceptions.Spotify;
-using Microsoft.Extensions.Options;
+using Blockify.Infrastructure.External.Configuration;
 using Blockify.Infrastructure.Tools.Extensions;
+using Microsoft.Extensions.Options;
 
-namespace Blockify.Infrastructure.Spotify.Client;
+namespace Blockify.Infrastructure.External.Spotify.Client;
 
-public class SpotifyClient : ISpotifyClient
+public class SpotifyClient : ExternalClient, ISpotifyClient
 {
-    private readonly HttpClient _httpClient;
     private readonly SpotifyConfiguration _spotifyConfiguration;
 
-    public SpotifyClient(HttpClient httpClient, IOptions<SpotifyConfiguration> spotifyConfiguration
-    )
+    public SpotifyClient(HttpClient client, IOptions<SpotifyConfiguration> spotifyConfiguration) : base(client)
     {
-        _httpClient = httpClient;
         _spotifyConfiguration = spotifyConfiguration.Value;
     }
 
-    private static async Task VerifyResponseAsync(HttpResponseMessage response, HttpRequestMessage request)
+    protected override async Task VerifyResponseAsync(HttpResponseMessage response, HttpRequestMessage request)
     {
         if (!response.IsSuccessStatusCode)
         {
-            var spotifyMessage = await response.GetErrorMessageAsync() ?? "No error message found on Spotify API response";
+            var spotifyMessage = await response.GetErrorMessageAsync();
             var statusCode = (int)response.StatusCode;
             var uri = request.RequestUri?.ToString();
 
@@ -49,7 +46,7 @@ public class SpotifyClient : ISpotifyClient
         var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
         request.Headers.Add("Authorization", $"Bearer {accessToken}");
 
-        var response = await _httpClient.SendAsync(request);
+        var response = await HttpClient.SendAsync(request);
         await VerifyResponseAsync(response, request);
 
         return response;
@@ -61,7 +58,7 @@ public class SpotifyClient : ISpotifyClient
         var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
         request.Headers.Add("Authorization", $"Bearer {accessToken}");
         
-        var response = await _httpClient.SendAsync(request);
+        var response = await HttpClient.SendAsync(request);
         await VerifyResponseAsync(response, request);
 
         return response;
@@ -83,7 +80,7 @@ public class SpotifyClient : ISpotifyClient
 
         request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.SendAsync(request);
+        var response = await HttpClient.SendAsync(request);
         await VerifyResponseAsync(response, request);
 
         return response;
@@ -104,7 +101,7 @@ public class SpotifyClient : ISpotifyClient
 
         request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.SendAsync(request);
+        var response = await HttpClient.SendAsync(request);
         await VerifyResponseAsync(response, request);
     }
 
@@ -125,7 +122,7 @@ public class SpotifyClient : ISpotifyClient
 
         request.Content = new FormUrlEncodedContent(requestContent);
 
-        var response = await _httpClient.SendAsync(request);
+        var response = await HttpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
 
