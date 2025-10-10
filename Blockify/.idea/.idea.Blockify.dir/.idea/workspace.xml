@@ -8,11 +8,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="80304cd6-2d6e-4c16-bf51-a9b49649efa9" name="Changes" comment="Moved to Services Configuration classes to Api/Configuration/External_Services_Configuration">
+    <list default="true" id="80304cd6-2d6e-4c16-bf51-a9b49649efa9" name="Changes" comment="LEAVE ME TF ALONE BRO">
+      <change afterPath="$PROJECT_DIR$/Infrastructure/External/Genius/GeniusClient.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Infrastructure/External/Genius/IGeniusClient.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Blockify.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Blockify.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Api/Configuration/ApplicationConfigurator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Api/Configuration/ApplicationConfigurator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Api/Configuration/DependencyInjector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Api/Configuration/DependencyInjector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Api/Configuration/External Services Configuration/GeminiConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Configuration/GeminiConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Api/Configuration/External Services Configuration/GeniusConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Configuration/GeniusConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Api/Configuration/External Services Configuration/SpotifyConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Configuration/SpotifyConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Application/DTOs/GeminiRequestContent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Application/DTOs/GeminiRequestContent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Application/Services/Authentication/UserAuthenticationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Application/Services/Authentication/UserAuthenticationService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Application/Services/Blockify/BlockifyService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Application/Services/Blockify/BlockifyService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Application/Services/Spotify/SpotifyService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Application/Services/Spotify/SpotifyService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Infrastructure/Genius/GeniusClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/Genius/GeniusClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Infrastructure/Genius/IGeniusClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/Genius/IGeniusClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Gemini/GeminiClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Gemini/GeminiClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Gemini/IGeminiClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Gemini/IGeminiClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Genius/GeniusClient.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Genius/IGeniusClient.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Client/ISpotifyClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Client/ISpotifyClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Client/SpotifyClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Client/SpotifyClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Mappers/Multiple/UserSpotifyPlaylistObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Mappers/Multiple/UserSpotifyPlaylistObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Mappers/Multiple/UserSpotifyPlaylists.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Mappers/Multiple/UserSpotifyPlaylists.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Mappers/Multiple/UserSpotifyTracks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Mappers/Multiple/UserSpotifyTracks.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Mappers/Singular/SpotifyOwner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Mappers/Singular/SpotifyOwner.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Mappers/Singular/SpotifyPlaylist.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Mappers/Singular/SpotifyPlaylist.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Mappers/Singular/SpotifyTrack.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Mappers/Singular/SpotifyTrack.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Mappers/Singular/SpotifyTrackObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Mappers/Singular/SpotifyTrackObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Spotify/Mappers/Singular/SpotifyTracks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/External/Spotify/Mappers/Singular/SpotifyTracks.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/Tools/Extensions/HttpResponseMessageExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/Tools/Extensions/HttpResponseMessageExtension.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,28 +61,23 @@
     &quot;assignee&quot;: &quot;DanielPadre58&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/DanielPadre58/Blockify",
-    "accountId": "55a69886-2511-467e-9d8c-bcb073b16f10"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/DanielPadre58/Blockify&quot;,
+    &quot;accountId&quot;: &quot;55a69886-2511-467e-9d8c-bcb073b16f10&quot;
   }
-}]]></component>
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/668934cd3d1647259613d9041c96c31f1ce00/46/101fcad9/02000031pdb15.il" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Configuration/ApplicationConfigurator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Configuration/DependencyInjector.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Api/Configuration/External Services Configuration/GeminiConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Configuration/External Services Configuration/GeniusConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Api/Configuration/External Services Configuration/GeniusConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Configuration/External Services Configuration/SpotifyConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Api/Controllers/TestController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Application/DTOs/GeminiRequestContent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/Services/Blockify/BlockifyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Application/Services/Blockify/BlockifyService.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/Services/Spotify/SpotifyService.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Infrastructure/Gemini/GeminiClient.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Gemini/GeminiClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Infrastructure/Genius/GeniusClient.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Genius/GeniusClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Spotify/Client/SpotifyClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Infrastructure/External/Gemini/GeminiClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Infrastructure/External/Genius/GeniusClient.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -92,7 +110,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "database.data.views",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -149,7 +167,10 @@
       <workItem from="1760031045952" duration="386000" />
       <workItem from="1760031465159" duration="2024000" />
       <workItem from="1760033540296" duration="157000" />
-      <workItem from="1760033724147" duration="3308000" />
+      <workItem from="1760033724147" duration="8527000" />
+      <workItem from="1760042555310" duration="38000" />
+      <workItem from="1760083347158" duration="314000" />
+      <workItem from="1760083684901" duration="8126000" />
     </task>
     <task id="LOCAL-00001" summary="Moved Spotify API mappers to Infrastructure layer">
       <option name="closed" value="true" />
@@ -319,7 +340,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760034498520</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="LEAVE ME TF ALONE BRO">
+      <option name="closed" value="true" />
+      <created>1760037113909</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1760037113909</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -349,7 +378,8 @@
     <MESSAGE value="Class responsible for storing Genius configurations data" />
     <MESSAGE value="Inject Genius configuration to GeniusConfiguration.cs" />
     <MESSAGE value="Moved to Services Configuration classes to Api/Configuration/External_Services_Configuration" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moved to Services Configuration classes to Api/Configuration/External_Services_Configuration" />
+    <MESSAGE value="LEAVE ME TF ALONE BRO" />
+    <option name="LAST_COMMIT_MESSAGE" value="LEAVE ME TF ALONE BRO" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
