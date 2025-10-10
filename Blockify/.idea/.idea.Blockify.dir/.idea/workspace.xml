@@ -8,16 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="80304cd6-2d6e-4c16-bf51-a9b49649efa9" name="Changes" comment="Updated to fifth migration">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Blockify.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Blockify.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Api/Controllers/BlockifyController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Api/Controllers/BlockifyController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Application/DTOs/GeminiRequestContent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Application/DTOs/GeminiRequestContent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Application/Services/Blockify/BlockifyService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Application/Services/Blockify/BlockifyService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Application/Services/Blockify/IBlockifyService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Application/Services/Blockify/IBlockifyService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Application/Services/Spotify/SpotifyService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Application/Services/Spotify/SpotifyService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Infrastructure/Blockify/Repositories/BlockifyRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/Blockify/Repositories/BlockifyRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Infrastructure/Blockify/Repositories/IBlockifyRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/Blockify/Repositories/IBlockifyRepository.cs" afterDir="false" />
-    </list>
+    <list default="true" id="80304cd6-2d6e-4c16-bf51-a9b49649efa9" name="Changes" comment="TS PMO💔🥀" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,29 +35,29 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/DanielPadre58/Blockify.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/DanielPadre58/Blockify&quot;,
     &quot;accountId&quot;: &quot;55a69886-2511-467e-9d8c-bcb073b16f10&quot;
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Api/Configuration/GeminiConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Controllers/BlockifyController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Controllers/BlockifyController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/ILViewer/668934cd3d1647259613d9041c96c31f1ce00/46/101fcad9/02000031pdb15.il" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Configuration/ApplicationConfigurator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Configuration/DependencyInjector.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Api/Configuration/DependencyInjector.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Api/Controllers/TestController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/DTOs/GeminiRequestContent.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Application/DTOs/GeminiRequestContent.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/DTOs/PlaylistDto.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/Services/Authentication/UserAuthenticationService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/Services/Blockify/BlockifyService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/Services/Blockify/BlockifyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/Services/Blockify/BlockifyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Application/Services/Blockify/BlockifyService.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/Services/Blockify/IBlockifyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Application/Services/Spotify/SpotifyService.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Domain/Extensions/ReaderExtension.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Blockify/Queries/check_users_table_exists.sql" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Blockify/Queries/insert_into_playlists.sql" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Blockify/Queries/select_user_by_spotify_id.sql" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Blockify/Repositories/BlockifyRepository.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Blockify/Repositories/IBlockifyRepository.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Infrastructure/Gemini/GeminiClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Infrastructure/External/Configuration/GeminiConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Infrastructure/External/Configuration/GeniusConfiguration.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Infrastructure/External/Gemini/Client/GeminiClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Infrastructure/External/Genius/Client/GeniusClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/2kupw/projects/dotnet/Blockify/Blockify/Infrastructure/Tools/Extensions/HttpResponseMessageExtension.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -85,29 +76,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.Launch Settings Https.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.Docker.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.Unnamed.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;implementation__gemini__integration&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CodeInspectionSettingsId&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.Launch Settings Https.executor": "Run",
+    "Docker.Docker.executor": "Run",
+    "Docker.Unnamed.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "deletionFromPopupRequiresConfirmation": "false",
+    "git-widget-placeholder": "implementation__geniusapi__integration",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "database.data.views",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.Launch Settings Https">
     <configuration name="Launch Settings Https" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Blockify.csproj" />
@@ -149,7 +140,17 @@
       <updated>1759908424706</updated>
       <workItem from="1759908435818" duration="19135000" />
       <workItem from="1759954457642" duration="237000" />
-      <workItem from="1759954747426" duration="4681000" />
+      <workItem from="1759954747426" duration="5340000" />
+      <workItem from="1759995712030" duration="108000" />
+      <workItem from="1759995871600" duration="3874000" />
+      <workItem from="1760007406695" duration="359000" />
+      <workItem from="1760031045952" duration="386000" />
+      <workItem from="1760031465159" duration="2024000" />
+      <workItem from="1760033540296" duration="157000" />
+      <workItem from="1760033724147" duration="8527000" />
+      <workItem from="1760042555310" duration="38000" />
+      <workItem from="1760083347158" duration="314000" />
+      <workItem from="1760083684901" duration="8966000" />
     </task>
     <task id="LOCAL-00001" summary="Moved Spotify API mappers to Infrastructure layer">
       <option name="closed" value="true" />
@@ -263,7 +264,135 @@
       <option name="project" value="LOCAL" />
       <updated>1759960683303</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Get all users keywords playlists endpoint">
+      <option name="closed" value="true" />
+      <created>1759961068836</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1759961068836</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Dto that will store all information that the AI will need to determine the song keyword as well as some additional (optional) contextual information">
+      <option name="closed" value="true" />
+      <created>1759961139137</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1759961139137</updated>
+    </task>
+    <task id="LOCAL-00017" summary="?">
+      <option name="closed" value="true" />
+      <created>1759961163014</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1759961163014</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Client responsible for comunicating with the Genius API and all depencies were injected">
+      <option name="closed" value="true" />
+      <created>1760000096603</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1760000096603</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Class responsible for storing Genius configurations data">
+      <option name="closed" value="true" />
+      <created>1760000131792</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1760000131792</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Inject Genius configuration to GeniusConfiguration.cs">
+      <option name="closed" value="true" />
+      <created>1760000156352</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1760000156352</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Moved to Services Configuration classes to Api/Configuration/External_Services_Configuration">
+      <option name="closed" value="true" />
+      <created>1760034498520</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1760034498520</updated>
+    </task>
+    <task id="LOCAL-00022" summary="LEAVE ME TF ALONE BRO">
+      <option name="closed" value="true" />
+      <created>1760037113909</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1760037113909</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Moved external services configuration dtos to Infrastructure/External/Configuration">
+      <option name="closed" value="true" />
+      <created>1760093304009</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1760093304009</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Search for Genius song Id by song name and anrtist">
+      <option name="closed" value="true" />
+      <created>1760093573676</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1760093573676</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Refactor Gemini and Spotify client namespaces and update dependency injections">
+      <option name="closed" value="true" />
+      <created>1760093924092</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1760093924092</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Add ToPrompt method to GeminiRequestContent for formatted output">
+      <option name="closed" value="true" />
+      <created>1760093961355</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1760093961355</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Improve error message handling in HttpResponseMessageExtension">
+      <option name="closed" value="true" />
+      <created>1760093977888</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1760093977888</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Refactor SpotifyConfiguration namespace for improved organization">
+      <option name="closed" value="true" />
+      <created>1760093989658</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1760093989658</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Refactor Spotify mappers to use Infrastructure.External namespace and make classes abstract">
+      <option name="closed" value="true" />
+      <created>1760094013954</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1760094013954</updated>
+    </task>
+    <task id="LOCAL-00030" summary="TS PMO💔🥀">
+      <option name="closed" value="true" />
+      <created>1760094080412</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1760094080412</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -272,11 +401,6 @@
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="false" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Moved Spotify API mappers to Infrastructure layer" />
-    <MESSAGE value="Refactored Spotify configuration dto to have both fields as required and init only" />
-    <MESSAGE value="Gemini initial configuration implementation" />
-    <MESSAGE value="Gemini client implementation as long as the httpclient injection" />
-    <MESSAGE value="Blockify service implementation, that will be responsible of tasks that require a more complex structure" />
     <MESSAGE value="Made fields init only" />
     <MESSAGE value="Send prompt to the Gemini api and returns the http response" />
     <MESSAGE value="Dto that will hold the information about the song that gemini will analyze" />
@@ -286,39 +410,23 @@
     <MESSAGE value="Created a new method that returns a list of playlists based on query response" />
     <MESSAGE value="Name field is now required, because it is needed to identify all userss keywords" />
     <MESSAGE value="Updated to fifth migration" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated to fifth migration" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Api/Controllers/BlockifyController.cs</url>
-          <line>65</line>
-          <properties documentPath="C:\Users\2kupw\projects\dotnet\Blockify\Blockify\Api\Controllers\BlockifyController.cs" containingFunctionPresentation="Method 'CreateKeywordPlaylist'">
-            <startOffsets>
-              <option value="2074" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2153" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Api/Controllers/BlockifyController.cs</url>
-          <line>67</line>
-          <properties documentPath="C:\Users\2kupw\projects\dotnet\Blockify\Blockify\Api\Controllers\BlockifyController.cs" containingFunctionPresentation="Method 'CreateKeywordPlaylist'">
-            <startOffsets>
-              <option value="2167" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2191" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Get all users keywords playlists endpoint" />
+    <MESSAGE value="Dto that will store all information that the AI will need to determine the song keyword as well as some additional (optional) contextual information" />
+    <MESSAGE value="?" />
+    <MESSAGE value="Client responsible for comunicating with the Genius API and all depencies were injected" />
+    <MESSAGE value="Class responsible for storing Genius configurations data" />
+    <MESSAGE value="Inject Genius configuration to GeniusConfiguration.cs" />
+    <MESSAGE value="Moved to Services Configuration classes to Api/Configuration/External_Services_Configuration" />
+    <MESSAGE value="LEAVE ME TF ALONE BRO" />
+    <MESSAGE value="Moved external services configuration dtos to Infrastructure/External/Configuration" />
+    <MESSAGE value="Search for Genius song Id by song name and anrtist" />
+    <MESSAGE value="Refactor Gemini and Spotify client namespaces and update dependency injections" />
+    <MESSAGE value="Add ToPrompt method to GeminiRequestContent for formatted output" />
+    <MESSAGE value="Improve error message handling in HttpResponseMessageExtension" />
+    <MESSAGE value="Refactor SpotifyConfiguration namespace for improved organization" />
+    <MESSAGE value="Refactor Spotify mappers to use Infrastructure.External namespace and make classes abstract" />
+    <MESSAGE value="TS PMO" />
+    <option name="LAST_COMMIT_MESSAGE" value="TS PMO" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

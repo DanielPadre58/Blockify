@@ -8,4 +8,14 @@ public record GeminiRequestContent
     public string? Artist { get; init; }
     public string? Genre { get; init; }
     public required string Lyrics { get; init; }
+
+    public string ToPrompt()
+    {
+        return $"///Objective: {Objective}" +
+               $"///Existing keywords: {string.Join(", ", ExistingKeywords ?? [])}" +
+               $"///Name: {Name}" +
+               $"///Artist: {Artist}" +
+               $"///Genre: {Genre}" +
+               $"///Lyrics: {Lyrics}";
+    }
 }

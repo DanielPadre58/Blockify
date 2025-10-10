@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using AspNet.Security.OAuth.Spotify;
-using Blockify.Api.Configuration.External_Services_Configuration;
+using Blockify.Infrastructure.External.Configuration;
 using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -8,33 +8,33 @@ namespace Blockify.Api.Configuration;
 
 public class ApplicationConfigurator
 {
-    public readonly IServiceCollection _services;
-    public readonly IConfiguration _configuration;
+    public readonly IServiceCollection Services;
+    public readonly IConfiguration Configuration;
 
     public ApplicationConfigurator(IServiceCollection services, IConfiguration configuration)
     {
-        _services = services;
-        _configuration = configuration;
+        Services = services;
+        Configuration = configuration;
     }
 
     public void ConfigureServices()
     {
-        _services.AddControllers();
-        _services.AddEndpointsApiExplorer();
-        _services.AddOpenApi();
-        _services
+        Services.AddControllers();
+        Services.AddEndpointsApiExplorer();
+        Services.AddOpenApi();
+        Services
             .AddAuthentication("default_cookie")
             .AddCookie("default_cookie", CookieOptions())
             .AddSpotify("spotify", SpotifyOptions());
 
-        _services.Configure<SpotifyConfiguration>(
-            _configuration.GetSection("Api:OAuth:Spotify")
+        Services.Configure<SpotifyConfiguration>(
+            Configuration.GetSection("Api:OAuth:Spotify")
         );
-        _services.Configure<GeminiConfiguration>(
-            _configuration.GetSection("Api:AI:Gemini")
+        Services.Configure<GeminiConfiguration>(
+            Configuration.GetSection("Api:AI:Gemini")
         );
-        _services.Configure<GeniusConfiguration>(
-            _configuration.GetSection("Api:Lyrics:Genius")
+        Services.Configure<GeniusConfiguration>(
+            Configuration.GetSection("Api:Lyrics:Genius")
         );
     }
 
@@ -56,11 +56,11 @@ public class ApplicationConfigurator
         return options =>
         {
             options.ClientId =
-                _configuration["Api:OAuth:Spotify:ClientId"]
+                Configuration["Api:OAuth:Spotify:ClientId"]
                 ?? throw new MissingConfigurationException("Spotify Client Id");
 
             options.ClientSecret =
-                _configuration["Api:OAuth:Spotify:ClientSecret"]
+                Configuration["Api:OAuth:Spotify:ClientSecret"]
                 ?? throw new MissingConfigurationException("Spotify Client Secret");
 
             options.SaveTokens = true;
@@ -92,7 +92,7 @@ public class ApplicationConfigurator
 
     public void AddDependencies()
     {
-        DependencyInjector.Inject(_services, _configuration);
+        DependencyInjector.Inject(Services, Configuration);
     }
 
     public void Configure(IApplicationBuilder app)

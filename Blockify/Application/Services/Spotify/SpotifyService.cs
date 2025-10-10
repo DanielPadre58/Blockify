@@ -2,13 +2,13 @@ using Blockify.Application.DTOs;
 using Blockify.Application.DTOs.Result;
 using Blockify.Application.Exceptions;
 using Blockify.Application.Services.Authentication;
-using Blockify.Application.Services.Spotify.Mappers.Multiple;
 using Blockify.Domain.Entities;
-using Blockify.Domain.Spotify.Mappers.Singular;
 using Blockify.Infrastructure.Blockify.Repositories;
 using Blockify.Infrastructure.Exceptions.Blockify;
 using Blockify.Infrastructure.Exceptions.Spotify;
-using Blockify.Infrastructure.Spotify.Client;
+using Blockify.Infrastructure.External.Spotify.Client;
+using Blockify.Infrastructure.External.Spotify.Mappers.Multiple;
+using Blockify.Infrastructure.External.Spotify.Mappers.Singular;
 
 namespace Blockify.Application.Services.Spotify;
 
@@ -41,7 +41,7 @@ public class SpotifyService : ISpotifyService
         try
         {
             var token = await _blockifyRepo.GetTokenByIdAsync(userId)
-            ?? throw new ResourceNotFoundException($"There's no Spotify token associated with the user {userId}", "Spotify.Token");
+                ?? throw new ResourceNotFoundException($"There's no Spotify token associated with the user {userId}", "Spotify.Token");
 
             if (token.IsAlmostExpired())
                 token = await _authenticationService.RefreshTokenAsync(userId);

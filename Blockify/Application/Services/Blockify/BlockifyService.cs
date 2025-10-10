@@ -1,7 +1,7 @@
 ﻿using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Spotify;
 using Blockify.Infrastructure.Blockify.Repositories;
-using Blockify.Infrastructure.Gemini;
+using Blockify.Infrastructure.External.Gemini.Client;
 
 namespace Blockify.Application.Services.Blockify;
 

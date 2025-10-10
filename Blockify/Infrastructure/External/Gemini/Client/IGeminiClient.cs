@@ -1,4 +1,4 @@
-﻿namespace Blockify.Infrastructure.Gemini;
+﻿namespace Blockify.Infrastructure.External.Gemini.Client;
 
 public interface IGeminiClient
 {

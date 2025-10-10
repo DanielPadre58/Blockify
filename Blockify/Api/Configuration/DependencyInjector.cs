@@ -2,9 +2,9 @@ using Blockify.Application.Services.Authentication;
 using Blockify.Application.Services.Blockify;
 using Blockify.Application.Services.Spotify;
 using Blockify.Infrastructure.Blockify.Repositories;
-using Blockify.Infrastructure.Gemini;
-using Blockify.Infrastructure.Genius;
-using Blockify.Infrastructure.Spotify.Client;
+using Blockify.Infrastructure.External.Gemini.Client;
+using Blockify.Infrastructure.External.Genius.Client;
+using Blockify.Infrastructure.External.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Npgsql;
 

@@ -5,7 +5,7 @@ using Blockify.Application.DTOs.Result;
 using Blockify.Domain.Entities;
 using Blockify.Infrastructure.Blockify.Repositories;
 using Blockify.Infrastructure.Exceptions.Blockify;
-using Blockify.Infrastructure.Spotify.Client;
+using Blockify.Infrastructure.External.Spotify.Client;
 using Blockify.Shared.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 

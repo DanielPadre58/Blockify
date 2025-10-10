@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace Blockify.Application.Services.Spotify.Mappers.Multiple;
+namespace Blockify.Infrastructure.External.Spotify.Mappers.Multiple;
 
-public class UserSpotifyTracks
+public abstract class UserSpotifyTracks
 {
     [JsonPropertyName("href")]
     public required string Href { get; set; }
