@@ -1,4 +1,4 @@
-﻿namespace Blockify.Api.Configuration.External_Services_Configuration;
+﻿namespace Blockify.Infrastructure.External.Configuration;
 
 public class GeniusConfiguration
 {
