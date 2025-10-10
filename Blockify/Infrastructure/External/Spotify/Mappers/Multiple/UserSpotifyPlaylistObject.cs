@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Blockify.Infrastructure.External.Spotify.Mappers.Multiple;
 
-public abstract class UserSpotifyPlaylistObject
+public record UserSpotifyPlaylistObject
 {
     [JsonPropertyName("id")]
     public required string Id { get; set; }

@@ -123,8 +123,7 @@ public class SpotifyClient : ExternalClient, ISpotifyClient
         request.Content = new FormUrlEncodedContent(requestContent);
 
         var response = await HttpClient.SendAsync(request);
-
-        response.EnsureSuccessStatusCode();
+        await VerifyResponseAsync(response, request);
 
         return response;
     }
