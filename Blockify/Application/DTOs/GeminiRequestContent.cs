@@ -11,11 +11,11 @@ public record GeminiRequestContent
 
     public string ToPrompt()
     {
-        return $"///Objective: {Objective}" +
-               $"///Existing keywords: {string.Join(", ", ExistingKeywords ?? [])}" +
-               $"///Name: {Name}" +
-               $"///Artist: {Artist}" +
-               $"///Genre: {Genre}" +
+        return $"Objective: {Objective}\n" +
+               $"///Existing keywords: {string.Join(", ", ExistingKeywords ?? [])}\n" +
+               $"///Name: {Name}\n" +
+               $"///Artist: {Artist ?? "Unknown"}\n" +
+               $"///Genre: {Genre ?? "Unknown"}\n" +
                $"///Lyrics: {Lyrics}";
     }
 }

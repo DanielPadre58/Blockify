@@ -3,7 +3,7 @@ using Blockify.Application.DTOs;
 
 namespace Blockify.Infrastructure.External.Spotify.Mappers.Singular;
 
-public abstract class SpotifyPlaylist
+public record SpotifyPlaylist
 {
     [JsonPropertyName("id")]
     public required string Id { get; init; }
